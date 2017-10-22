@@ -1,0 +1,25 @@
+﻿@model CleverCSM.ViewModels.RandomCustomerViewModel
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{ 
+    var className = Model.Contact.Count > 0 ? "popular" : null;
+}
+
+<h2 class="@className">@Model.Customer.Name</h2>
+
+@if (Model.Contact.Count == 0)
+{
+    <text>@Model.Customer.Name has no contacts</text>
+}
+else
+{
+    <ul>
+        @foreach (var c in Model.Contact)
+        {
+            <li>@c.Name</li>
+        }
+    </ul>
+}
