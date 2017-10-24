@@ -7,16 +7,29 @@ using CleverCSM.Models;
 namespace CleverCSM.Controllers {
     public class ContactController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public ContactController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+
         public ViewResult Index()
         {
-            var contacts = GetContacts();
+            var contacts = _context.Contact.ToList();
 
             return View(contacts);
         }
 
         public ActionResult Details(int id)
         {
-            var contact = GetContacts().SingleOrDefault(c => c.Id == id);
+            var contact = _context.Contact.SingleOrDefault(c => c.Id == id);
 
             if (contact == null)
                 return HttpNotFound();
@@ -24,13 +37,5 @@ namespace CleverCSM.Controllers {
             return View(contact);
         }
 
-        private IEnumerable<Contact> GetContacts()
-        {
-            return new List<Contact>
-            {
-                new Contact { Id = 1, Name = "Paulin Delvaux" },
-                new Contact { Id = 2, Name = "Champ 1" }
-            };
-        }
     }
 }

@@ -7,13 +7,13 @@ namespace CleverCSM.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class y : IMigrationMetadata
+    public sealed partial class mailChange : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(y));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(mailChange));
         
         string IMigrationMetadata.Id
         {
-            get { return "201710222227158_y"; }
+            get { return "201710240831020_mailChange"; }
         }
         
         string IMigrationMetadata.Source

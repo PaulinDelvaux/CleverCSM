@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -209,33 +210,21 @@
     <Compile Include="Migrations\201710222025404_AddedDbs.Designer.cs">
       <DependentUpon>201710222025404_AddedDbs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710222027514_Populate.cs" />
-    <Compile Include="Migrations\201710222027514_Populate.Designer.cs">
-      <DependentUpon>201710222027514_Populate.cs</DependentUpon>
+    <Compile Include="Migrations\201710240831020_mailChange.cs" />
+    <Compile Include="Migrations\201710240831020_mailChange.Designer.cs">
+      <DependentUpon>201710240831020_mailChange.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710222139043_Keys.cs" />
-    <Compile Include="Migrations\201710222139043_Keys.Designer.cs">
-      <DependentUpon>201710222139043_Keys.cs</DependentUpon>
+    <Compile Include="Migrations\201710240928151_foreingkeys.cs" />
+    <Compile Include="Migrations\201710240928151_foreingkeys.Designer.cs">
+      <DependentUpon>201710240928151_foreingkeys.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710222208347_Keys2.cs" />
-    <Compile Include="Migrations\201710222208347_Keys2.Designer.cs">
-      <DependentUpon>201710222208347_Keys2.cs</DependentUpon>
+    <Compile Include="Migrations\201710240928542_addAddress.cs" />
+    <Compile Include="Migrations\201710240928542_addAddress.Designer.cs">
+      <DependentUpon>201710240928542_addAddress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710222213316_Removal.cs" />
-    <Compile Include="Migrations\201710222213316_Removal.Designer.cs">
-      <DependentUpon>201710222213316_Removal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710222217505_Keyy.cs" />
-    <Compile Include="Migrations\201710222217505_Keyy.Designer.cs">
-      <DependentUpon>201710222217505_Keyy.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710222227158_y.cs" />
-    <Compile Include="Migrations\201710222227158_y.Designer.cs">
-      <DependentUpon>201710222227158_y.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710222229536_keystoCompanyCustomer.cs" />
-    <Compile Include="Migrations\201710222229536_keystoCompanyCustomer.Designer.cs">
-      <DependentUpon>201710222229536_keystoCompanyCustomer.cs</DependentUpon>
+    <Compile Include="Migrations\201710241052239_keys.cs" />
+    <Compile Include="Migrations\201710241052239_keys.Designer.cs">
+      <DependentUpon>201710241052239_keys.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AddressInfo.cs" />
@@ -356,26 +345,17 @@
     <EmbeddedResource Include="Migrations\201710222025404_AddedDbs.resx">
       <DependentUpon>201710222025404_AddedDbs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222027514_Populate.resx">
-      <DependentUpon>201710222027514_Populate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201710240831020_mailChange.resx">
+      <DependentUpon>201710240831020_mailChange.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222139043_Keys.resx">
-      <DependentUpon>201710222139043_Keys.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201710240928151_foreingkeys.resx">
+      <DependentUpon>201710240928151_foreingkeys.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222208347_Keys2.resx">
-      <DependentUpon>201710222208347_Keys2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201710240928542_addAddress.resx">
+      <DependentUpon>201710240928542_addAddress.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222213316_Removal.resx">
-      <DependentUpon>201710222213316_Removal.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222217505_Keyy.resx">
-      <DependentUpon>201710222217505_Keyy.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222227158_y.resx">
-      <DependentUpon>201710222227158_y.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222229536_keystoCompanyCustomer.resx">
-      <DependentUpon>201710222229536_keystoCompanyCustomer.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201710241052239_keys.resx">
+      <DependentUpon>201710241052239_keys.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -10,39 +10,23 @@ namespace CleverCSM.Controllers
 {
     public class CustomerController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public CustomerController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         public ViewResult Index()
         {
-            var customer = GetCustomers();
+            var customer = _context.Customer.ToList();
 
             return View(customer);
-        }
-
-        private IEnumerable<Customer> GetCustomers()
-        {
-            return new List<Customer>
-            {
-                new Customer { Id = 1, Name = "DTU" },
-                new Customer { Id = 2, Name = "KU" }
-            };
-        }
-
-        // GET: Customer
-        public ActionResult Random()
-        {
-            var customer = new Customer() { Name = "DTU" };
-            var contact = new List<Contact>
-            {
-                new Contact {Name="Paulin Delvaux2" },
-                new Contact {Name="Champ 2" }
-            };
-
-            var ViewModel = new RandomCustomerViewModel
-            {
-                Customer = customer,
-                Contact= contact
-            };
-
-            return View(ViewModel);
         }
     }
 }

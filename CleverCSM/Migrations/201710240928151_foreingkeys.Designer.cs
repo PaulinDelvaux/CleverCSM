@@ -7,13 +7,13 @@ namespace CleverCSM.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Keys : IMigrationMetadata
+    public sealed partial class foreingkeys : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Keys));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(foreingkeys));
         
         string IMigrationMetadata.Id
         {
-            get { return "201710222139043_Keys"; }
+            get { return "201710240928151_foreingkeys"; }
         }
         
         string IMigrationMetadata.Source

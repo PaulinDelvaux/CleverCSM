@@ -26,13 +26,17 @@ else
         <thead>
             <tr>
                 <th>Users</th>
+                <th>Email</th>
+                <th>Company</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var c in Model)
             {
                 <tr>
-                    <td>@Html.ActionLink(c.Name, "Details", "Users", new { id = c.Id }, null)</td>
+                    <td>@Html.ActionLink(c.Name, "Details", "User", new { id = c.Id }, null)</td>
+                    <td>@c.AddressInfo.Email</td>
+                    <td>@c.Company.Name</td>
                 </tr>
             }
         </tbody>

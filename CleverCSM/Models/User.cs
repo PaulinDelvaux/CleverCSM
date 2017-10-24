@@ -9,7 +9,10 @@ namespace CleverCSM.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int CompanyId { get; set; }
         public byte Type { get; set; }
+        public AddressInfo AddressInfo { get; set; }
+        public int? AddressInfoId { get; set; }
+        public Company Company { get; set; }
+        public int CompanyId { get; set; }
     }
 }

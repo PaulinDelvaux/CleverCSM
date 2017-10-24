@@ -15,19 +15,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Companies</h2>
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th>Companies</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var c in Model)
-        {
+<h2>Users</h2>
+@if (!Model.Any())
+{
+    <p>We don't have any companies yet.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
             <tr>
-                <td>@c.Name</td>
+                <th>Companies</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@Html.ActionLink(c.Name, "Details", "Company", new { id = c.Id }, null)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
