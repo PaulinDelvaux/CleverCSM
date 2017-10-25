@@ -28,15 +28,31 @@ else
                 <th>Users</th>
                 <th>Email</th>
                 <th>Company</th>
+                <th>UserType</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var c in Model)
             {
+                var uType="";
+                if (c.Type == 1)
+                {
+                    uType = "Admin";
+                }
+                else if (c.Type == 2)
+                {
+                    uType = "User";
+                }
+                else if (c.Type == 3)
+                {
+                    uType = "Contact";
+                }
+
                 <tr>
                     <td>@Html.ActionLink(c.Name, "Details", "User", new { id = c.Id }, null)</td>
                     <td>@c.AddressInfo.Email</td>
                     <td>@c.Company.Name</td>
+                    <td>@uType</td>
                 </tr>
             }
         </tbody>

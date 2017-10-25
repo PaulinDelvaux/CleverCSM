@@ -30,7 +30,7 @@ namespace CleverCSM.Controllers
 
         public ActionResult Details(int id)
         {
-            var user = _context.User.SingleOrDefault(c => c.Id == id);
+            var user = _context.User.Include(c => c.AddressInfo).Include(b => b.Company).SingleOrDefault(c => c.Id == id);
 
             if (user == null)
                 return HttpNotFound();

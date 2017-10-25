@@ -1,0 +1,9 @@
+﻿@model CleverCSM.Models.Customer
+
+<h5 style="font-weight:700">Create new Customer</h5>
+@using (Html.BeginForm("Create", "Customer"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m=>m.Name)
+    </div>
+}

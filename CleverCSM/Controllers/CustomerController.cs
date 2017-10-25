@@ -28,5 +28,20 @@ namespace CleverCSM.Controllers
 
             return View(customer);
         }
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            _context.AddressInfo.Add(customer.AddressInfo);
+            _context.SaveChanges();
+
+            var aInfo = _context.AddressInfo.SingleOrDefault(c => c.Email == customer.AddressInfo.Email && c.Address == customer.AddressInfo.Address && c.Phone == customer.AddressInfo.Phone);
+
+            customer.AddressInfoId = aInfo.Id;
+
+            _context.Customer.Add(customer);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Customer");
+        }
     }
 }

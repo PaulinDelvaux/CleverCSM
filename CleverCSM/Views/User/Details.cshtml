@@ -6,3 +6,36 @@
     }
 
 <h2>@Model.Name</h2>
+<li id="userType">Usertype:   @(@Model.Type == 1 ? "Admin" : "User")</li>
+<li id="cName">Usertype:   @Model.Company.Name</li>
+
+<div id="createCustomer" style="display:none">
+    <br /><br /><br />
+    <h5 style="font-weight:700">Create new Customer</h5>
+    @using (Html.BeginForm("Save", "Customer"))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name)
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @Value = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.AddressInfo.Address)
+            @Html.TextBoxFor(m => m.AddressInfo.Address, new { @class = "form-control", @Value = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.AddressInfo.Email)
+            @Html.TextBoxFor(m => m.AddressInfo.Email, new { @class = "form-control", @Value = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.AddressInfo.Phone)
+            @Html.TextBoxFor(m => m.AddressInfo.Phone, new { @class = "form-control", @Value = "" })
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    }
+</div>
+<script>
+    if (@Model.Type == 1)
+        document.getElementById('createCustomer').style.display = 'block';
+    else
+        document.getElementById('createCustomer').style.display = 'none';
+</script>
