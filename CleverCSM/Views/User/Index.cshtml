@@ -35,7 +35,11 @@ else
             @foreach (var c in Model)
             {
                 var uType="";
-                if (c.Type == 1)
+                if (c.Type == 0)
+                {
+                    uType = "SuperAdmin";
+                }
+                else if (c.Type == 1)
                 {
                     uType = "Admin";
                 }

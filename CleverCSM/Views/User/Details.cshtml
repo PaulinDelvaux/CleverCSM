@@ -1,41 +1,243 @@
-﻿@model CleverCSM.Models.User
-
+﻿@model CleverCSM.ViewModels.ViewCustomer
 @{
-    ViewBag.Title = Model.Name;
+    ViewBag.Title = @Model.User.Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+}
 
-<h2>@Model.Name</h2>
-<li id="userType">Usertype:   @(@Model.Type == 1 ? "Admin" : "User")</li>
-<li id="cName">Usertype:   @Model.Company.Name</li>
-
-<div id="createCustomer" style="display:none">
-    <br /><br /><br />
-    <h5 style="font-weight:700">Create new Customer</h5>
-    @using (Html.BeginForm("Save", "Customer"))
+<h2>@Model.User.Name</h2>
+@{
+    if (@Model.User.Type == 0)
     {
-        <div class="form-group">
-            @Html.LabelFor(m => m.Name)
-            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @Value = "" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.AddressInfo.Address)
-            @Html.TextBoxFor(m => m.AddressInfo.Address, new { @class = "form-control", @Value = "" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.AddressInfo.Email)
-            @Html.TextBoxFor(m => m.AddressInfo.Email, new { @class = "form-control", @Value = "" })
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.AddressInfo.Phone)
-            @Html.TextBoxFor(m => m.AddressInfo.Phone, new { @class = "form-control", @Value = "" })
-        </div>
-        <button type="submit" class="btn btn-primary">Save</button>
+       <li id="userType">UserType: SuperAdmin</li>
     }
+    if (@Model.User.Type == 1)
+    {
+        <li id="userType">UserType: Admin</li>
+    }
+    if (@Model.User.Type > 1)
+    {
+        <li id="userType">UserType: User</li>
+    }
+}
+<li id="cName">Company:   @Model.User.Company.Name</li>
+
+<div class="col-md-12">
+    <div id="createCustomer" class="col-md-3" style="display:none">
+        <br /><br /><br />
+        <h5 style="font-weight:700;border:1px #808080 solid;padding:15pt;border-radius:2pt;text-align:center" onclick="showCust()">Create new Customer</h5>
+        <div id="createCustomers" style="display:none">
+            @using (Html.BeginForm("Save", "Customer"))
+            {
+                <div class="form-group" style="display:none">
+                    @Html.LabelFor(m => m.Customer.Id)
+                    @Html.TextBoxFor(m => m.Customer.Id, new { @class = "form-control", @Value = Model.User.CompanyId })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Customer.Name)
+                    @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control", @Value = "", @oninput = "ChangeCustomerEvent('Customer_Name');" })
+                    <span id="warningCustomer_Name" style="display:none">Name is required</span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Customer.AddressInfo.Address)
+                    @Html.TextBoxFor(m => m.Customer.AddressInfo.Address, new { @class = "form-control", @Value = "", @oninput = "ChangeCustomerEvent('Customer_AddressInfo_Address');" })
+                    <span id="warningCustomer_AddressInfo_Address" style="display:none">Address is required</span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Customer.AddressInfo.Email)
+                    @Html.TextBoxFor(m => m.Customer.AddressInfo.Email, new { @class = "form-control", @Value = "", @oninput = "ChangeCustomerEvent('Customer_AddressInfo_Email');" })
+                    <span id="warningCustomer_AddressInfo_Email" style="display:none"></span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Customer.AddressInfo.Phone)
+                    @Html.TextBoxFor(m => m.Customer.AddressInfo.Phone, new { @class = "form-control", @Value = "", @oninput = "ChangeCustomerEvent('Customer_AddressInfo_Phone');" })
+                    <span id="warningCustomer_AddressInfo_Phone" style="display:none"></span>
+                </div>
+                <span id="savecustomerbtn1" class="btn btn-primary" onclick="checkSaveCustomer()">Save</span>
+                <button id="savecustomerbtn2" type="submit" class="btn btn-primary" style="display:none">Save</button>
+            }
+        </div>
+    </div>
+    <div id="createUser" class="col-md-3" style="display:none">
+        <br /><br /><br />
+        <h5 style="font-weight:700;border:1px #808080 solid;padding:15pt;border-radius:2pt;text-align:center" onclick="showUser()">Create new User</h5>
+        <div id="createUsers" style="display:none">
+            @using (Html.BeginForm("Save", "User"))
+            {
+                <div class="form-group" style="display:none">
+                    @Html.LabelFor(m => m.User.Id)
+                    @Html.TextBoxFor(m => m.User.Id, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.Name)
+                    @Html.TextBoxFor(m => m.User.Name, new { @class = "form-control", @Value = "", @oninput = "ChangeUserEvent('User_Name');" })
+                    <span id="warningUser_Name" style="display:none">Name is required</span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.Password)
+                    @Html.TextBoxFor(m => m.User.Password, new { @class = "form-control", @Value = "", @type = "Password", @oninput = "ChangeUserEvent('User_Password');" })
+                    <span id="warningUser_Password" style="display:none">Password is required</span>
+                </div>
+                <div>
+                    @Html.LabelFor(c=>c.User.Company.Name, "Select Company")
+                    @Html.DropDownListFor(m => m.User.CompanyId, new SelectList(Model.Company, "Id", "Name"), new { @class = "form-control"})
+                </div>
+                <div>
+                    @Html.LabelFor(c => c.User.Type, "Select User Type")
+                    @Html.DropDownListFor(m => m.User.Type, new SelectList(Model.Type, "Id", "Name"), new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.AddressInfo.Address)
+                    @Html.TextBoxFor(m => m.User.AddressInfo.Address, new { @class = "form-control", @Value = "", @oninput = "ChangeUserEvent('User_AddressInfo_Address');" })
+                    <span id="warningUser_AddressInfo_Address" style="display:none">Address is required</span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.AddressInfo.Email)
+                    @Html.TextBoxFor(m => m.User.AddressInfo.Email, new { @class = "form-control", @Value = "", @type="email", @oninput = "ChangeUserEvent('User_AddressInfo_Email');" })
+                    <span id="warningUser_AddressInfo_Email" style="display:none"></span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.AddressInfo.Phone)
+                    @Html.TextBoxFor(m => m.User.AddressInfo.Phone, new { @class = "form-control", @Value = "", @type="tel",@oninput = "ChangeUserEvent('User_AddressInfo_Phone');" })
+                    <span id="warningUser_AddressInfo_Phone" style="display:none"></span>
+                </div>
+                <span id="saveuserbtn1" class="btn btn-primary" onclick="checkSaveUser()">Save</span>
+                <button id="saveuserbtn2"type="submit" class="btn btn-primary" style="display:none">Save</button>
+            }
+        </div>
+    </div>
 </div>
 <script>
-    if (@Model.Type == 1)
+    if (@Model.User.Type == 0)
+        document.getElementById('createUser').style.display = 'block';
+    else
+        document.getElementById('createUser').style.display = 'none';
+
+    if (@Model.User.Type < 2)
         document.getElementById('createCustomer').style.display = 'block';
     else
         document.getElementById('createCustomer').style.display = 'none';
+
+    showCust = function () {
+        if (document.getElementById("createCustomers").style.display == "block")
+            document.getElementById("createCustomers").style.display = 'none';
+        else
+            document.getElementById("createCustomers").style.display = 'block';
+    }
+
+    showUser = function () {
+        if (document.getElementById("createUsers").style.display == "block")
+            document.getElementById("createUsers").style.display = 'none';
+        else
+            document.getElementById("createUsers").style.display = 'block';
+    }
+
+    checkSaveUser = function () {
+        if (document.getElementById("User_Name").value == "") {
+            document.getElementById("User_Name").style.border = '2px solid red';
+            document.getElementById("warningUser_Name").style.display = 'block' ;
+        }
+        if (document.getElementById("User_Password").value == "") {
+            document.getElementById("User_Password").style.border = '2px solid red';
+            document.getElementById("warningUser_Password").style.display = 'block';
+        }
+        if (document.getElementById("User_AddressInfo_Address").value == "") {
+            document.getElementById("User_AddressInfo_Address").style.border = '2px solid red';
+            document.getElementById("warningUser_AddressInfo_Address").style.display = 'block';
+        }
+        if (document.getElementById("User_AddressInfo_Email").value == "") {
+            document.getElementById("User_AddressInfo_Email").style.border = '2px solid red';
+            document.getElementById("warningUser_AddressInfo_Email").innerHTML = "Email is required";
+            document.getElementById("warningUser_AddressInfo_Email").style.display = 'block';
+        }
+        if (document.getElementById("User_AddressInfo_Email").value != "" && document.getElementById("User_AddressInfo_Email").value.indexOf("@@") == -1) {
+            document.getElementById("User_AddressInfo_Email").style.border = '2px solid red';
+            document.getElementById("warningUser_AddressInfo_Email").innerHTML = "Email needs to be valid";
+            document.getElementById("warningUser_AddressInfo_Email").style.display = 'block';
+        }
+        if (document.getElementById("User_AddressInfo_Phone").value == "") {
+            document.getElementById("User_AddressInfo_Phone").style.border = '2px solid red';
+            document.getElementById("warningUser_AddressInfo_Phone").innerHTML = "Phone is required";
+            document.getElementById("warningUser_AddressInfo_Phone").style.display = 'block';
+        }
+        if (document.getElementById("User_AddressInfo_Phone").value != "" && document.getElementById("User_AddressInfo_Phone").value.length < 8) {
+            document.getElementById("User_AddressInfo_Phone").style.border = '2px solid red';
+            document.getElementById("warningUser_AddressInfo_Phone").innerHTML = "Phone is required to be 8 Numbers";
+            document.getElementById("warningUser_AddressInfo_Phone").style.display = 'block';
+        }
+
+    }
+
+    ChangeUserEvent = function (area) {
+        var warn = "warning" + area;
+        if (document.getElementById(area).value != "") {
+            document.getElementById(area).style.border = '1px solid #e7e7e7';
+            document.getElementById(warn).style.display = 'none';
+        }
+
+        if (document.getElementById("User_Name").value != "" && document.getElementById("User_Password").value != "" && document.getElementById("User_AddressInfo_Address").value != "" &&
+            document.getElementById("User_AddressInfo_Email").value.indexOf("@@") != -1 && document.getElementById("User_AddressInfo_Phone").value.length > 7) {
+            document.getElementById("saveuserbtn1").style.display = 'none';
+            document.getElementById("saveuserbtn2").style.display = 'block';
+        }
+        else {
+            document.getElementById("saveuserbtn1").style.display = 'block';
+            document.getElementById("saveuserbtn2").style.display = 'none';
+        }
+
+    }
+
+
+    checkSaveCustomer = function () {
+        if (document.getElementById("Customer_Name").value == "") {
+            document.getElementById("Customer_Name").style.border = '2px solid red';
+            document.getElementById("warningCustomer_Name").style.display = 'block';
+        }
+        if (document.getElementById("Customer_AddressInfo_Address").value == "") {
+            document.getElementById("Customer_AddressInfo_Address").style.border = '2px solid red';
+            document.getElementById("warningCustomer_AddressInfo_Address").style.display = 'block';
+        }
+        if (document.getElementById("Customer_AddressInfo_Email").value == "") {
+            document.getElementById("Customer_AddressInfo_Email").style.border = '2px solid red';
+            document.getElementById("warningCustomer_AddressInfo_Email").innerHTML = "Email is required";
+            document.getElementById("warningCustomer_AddressInfo_Email").style.display = 'block';
+        }
+        if (document.getElementById("Customer_AddressInfo_Email").value != "" && document.getElementById("Customer_AddressInfo_Email").value.indexOf("@@") == -1) {
+            document.getElementById("Customer_AddressInfo_Email").style.border = '2px solid red';
+            document.getElementById("warningCustomer_AddressInfo_Email").innerHTML = "Email needs to be valid";
+            document.getElementById("warningCustomer_AddressInfo_Email").style.display = 'block';
+        }
+        if (document.getElementById("Customer_AddressInfo_Phone").value == "") {
+            document.getElementById("Customer_AddressInfo_Phone").style.border = '2px solid red';
+            document.getElementById("warningCustomer_AddressInfo_Phone").innerHTML = "Phone is required";
+            document.getElementById("warningCustomer_AddressInfo_Phone").style.display = 'block';
+        }
+        if (document.getElementById("Customer_AddressInfo_Phone").value != "" && document.getElementById("Customer_AddressInfo_Phone").value.length < 8) {
+            document.getElementById("Customer_AddressInfo_Phone").style.border = '2px solid red';
+            document.getElementById("warningCustomer_AddressInfo_Phone").innerHTML = "Phone is required to be 8 Numbers";
+            document.getElementById("warningCustomer_AddressInfo_Phone").style.display = 'block';
+        }
+
+    }
+
+    ChangeCustomerEvent = function (area) {
+        var warn = "warning" + area;
+        if (document.getElementById(area).value != "") {
+            document.getElementById(area).style.border = '1px solid #e7e7e7';
+            document.getElementById(warn).style.display = 'none';
+        }
+
+        if (document.getElementById("Customer_Name").value != "" && document.getElementById("Customer_AddressInfo_Address").value != "" &&
+            document.getElementById("Customer_AddressInfo_Email").value.indexOf("@@") != -1 && document.getElementById("Customer_AddressInfo_Phone").value.length > 7) {
+            document.getElementById("savecustomerbtn1").style.display = 'none';
+            document.getElementById("savecustomerbtn2").style.display = 'block';
+            console.log("1");
+        }
+        else {
+            document.getElementById("savecustomerbtn1").style.display = 'block';
+            document.getElementById("savecustomerbtn2").style.display = 'none';
+            console.log("2");
+        }
+
+    }
+
 </script>

@@ -9,7 +9,6 @@ namespace CleverCSM.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int UserId { get; set; }
         public AddressInfo AddressInfo { get; set; }
         public int? AddressInfoId { get; set; }
 

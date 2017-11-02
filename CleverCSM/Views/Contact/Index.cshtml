@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CleverCSM.Models.Contact>
+﻿@*@model IEnumerable<CleverCSM.Models.Contact>*@
 @*
     Note: I've set the model for this view to IEnumerable<Customer>.
     This is a simple interface implemented by the list class. Since
@@ -10,13 +10,13 @@
     will remain unchanged.
 *@
 
-@{
+@*@{
     ViewBag.Title = "Contact";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
+}*@
 
-<h2>Contacts</h2>
-@if (!Model.Any())
+@*<h2>Contacts</h2>*@
+@*@if (!Model.Any())
 {
     <p>We don't have any customers yet.</p>
 }
@@ -37,4 +37,4 @@ else
             }
         </tbody>
     </table>
-}
+}*/*@

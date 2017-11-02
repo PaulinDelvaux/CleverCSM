@@ -20,4 +20,8 @@ namespace CleverCSM.Models
         public DateTime LastTryAttempt { get; set; }
 
     }
+    public class WWOP
+    {
+
+    }
 }
