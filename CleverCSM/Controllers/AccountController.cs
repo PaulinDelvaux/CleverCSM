@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CleverCSM.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CleverCSM.Controllers
 {
@@ -17,9 +19,11 @@ namespace CleverCSM.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext _context;
 
         public AccountController()
         {
+            _context = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -79,7 +83,7 @@ namespace CleverCSM.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -151,18 +155,53 @@ namespace CleverCSM.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Address = model.Address,
+                    NameOfUser = model.NameOfUser,
+                    PhoneNumber = model.NumberOfPhone
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
+                    var addrInfo = new AddressInfo
+                    {
+                        Email =user.Email,
+                        Address=user.Address,
+                        Phone = Int32.Parse(user.PhoneNumber)
+                    };
+
+                    _context.AddressInfo.Add(addrInfo);
+                    _context.SaveChanges();
+
+                    var aInfo = _context.AddressInfo.SingleOrDefault(c => c.Email == addrInfo.Email && c.Address == addrInfo.Address && c.Phone == addrInfo.Phone);
+
+                    var passHash = GetMd5Hash(MD5.Create(), model.Password);
+                    var nullCom = new Company{ };
+
+                    var newuser = new User
+                    {
+                        Name = user.NameOfUser,
+                        CompanyName = "ClecerCode",
+                        Type = 2,
+                        AddressInfoId = addrInfo.Id,
+                        AddressInfoEmail=addrInfo.Email,
+                        Password = passHash
+                    };
+                    
+
+                    _context.User.Add(newuser);
+                    _context.SaveChanges();
+                    
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -405,6 +444,8 @@ namespace CleverCSM.Controllers
 
         protected override void Dispose(bool disposing)
         {
+            _context.Dispose();
+
             if (disposing)
             {
                 if (_userManager != null)
@@ -481,5 +522,26 @@ namespace CleverCSM.Controllers
             }
         }
         #endregion
+
+        static string GetMd5Hash(MD5 md5Hash, string input)
+        {
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
     }
 }

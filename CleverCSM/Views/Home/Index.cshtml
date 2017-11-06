@@ -1,31 +1,135 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<input id="gettheusername" type="hidden" value="@User.Identity.Name" />
+<h2>CleverCSM</h2>
+<br /><br />
+<div class="col-md-12">
+    <div class="col-md-6">
+        <div class="col-md-6" id="allCust" style="display:block">
+            <table id="Customers" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Customers</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-md-6" id="allUsers" style="display:none">
+            <table id="Users" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Users</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-md-6" id="allConts" style="display:block">
+            <table id="Contacts" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Contacts</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="contactInfomation" style="height: 400pt;border:#ccc 1px solid">
+            <h2 style="text-align:center">Contact Name</h2>
+            <br />
+            <div class="col-md-8 clearfix">
+                <div class="col-md-3">
+                    <h5 style="font-weight:200">Company:</h5> 
+                    <h5 style="font-weight:200">Email:</h5>
+                    <h5 style="font-weight:200">Phone:</h5>
+                    <h5 style="font-weight:200">Address:</h5>
+                </div>
+                <div class="col-md-6">
+                    <h5 style="font-weight:700">Company name</h5>
+                    <h5 style="font-weight:700">Contact Email</h5>
+                    <h5 style="font-weight:700">Contact Phone</h5>
+                    <h5 style="font-weight:700">Contact Address</h5>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<h2 id="cUserName"></h2>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var currentUser = {
+                email: document.getElementById("gettheusername").value
+            };
+
+            $("#Users").DataTable({
+
+                ajax: {
+                    url: "api/users",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, user) {
+                            if (user.addressInfoEmail == currentUser.email) {
+                                document.getElementById("viewUserName").innerHTML = "Hello "+user.name+"!";
+                                currentUser = user;
+                            }
+                            return "<a href='/user/details/" + user.id + "'>" + user.name + "</a>";
+                        }
+                    }
+                ],
+            });
+            $("#Customers").DataTable({
+
+                ajax: {
+                    url: "api/customers",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, customer) {
+                            return "<a href='/customer/details/" + customer.id + "'>" + customer.name + "</a>";
+                        }
+                    }
+                ],
+            });
+            $("#Contacts").DataTable({
+
+                ajax: {
+                    url: "api/contacts",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, contacts) {
+                            return "<a href='/contacts/details/" + contacts.id + "'>" + contacts.name + "</a>";
+                        }
+                    }
+                ],
+            });
+
+            
+            document.getElementById("Customers_info").style.display = 'none';
+            document.getElementById("Customers_paginate").style.display = 'none';
+            document.getElementById("Customers_length").style.display = 'none';
+            document.getElementById("Contacts_info").style.display = 'none';
+            document.getElementById("Contacts_paginate").style.display = 'none';
+            document.getElementById("Contacts_length").style.display = 'none';
+            document.getElementById("Users_info").style.display = 'none';
+            document.getElementById("Users_paginate").style.display = 'none';
+            document.getElementById("Users_length").style.display = 'none';
+
+        })
+    </script>
+}

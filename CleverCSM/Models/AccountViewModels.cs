@@ -65,6 +65,19 @@ namespace CleverCSM.Models
     public class RegisterViewModel
     {
         [Required]
+        [StringLength(255)]
+        [Display(Name = "Phone Number")]
+        public string NumberOfPhone { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string Address { get; set; }
+        
+        [Required]
+        [Display(Name = "Full Name")]
+        public string NameOfUser { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

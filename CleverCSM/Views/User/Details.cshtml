@@ -19,7 +19,7 @@
         <li id="userType">UserType: User</li>
     }
 }
-<li id="cName">Company:   @Model.User.Company.Name</li>
+<li id="cName">Company:   @Model.User.CompanyName</li>
 
 <div class="col-md-12">
     <div id="createCustomer" class="col-md-3" style="display:none">
@@ -30,7 +30,7 @@
             {
                 <div class="form-group" style="display:none">
                     @Html.LabelFor(m => m.Customer.Id)
-                    @Html.TextBoxFor(m => m.Customer.Id, new { @class = "form-control", @Value = Model.User.CompanyId })
+                    @Html.TextBoxFor(m => m.Customer.Id, new { @class = "form-control", @Value = Model.User.CompanyName })
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.Customer.Name)
@@ -61,7 +61,7 @@
         <br /><br /><br />
         <h5 style="font-weight:700;border:1px #808080 solid;padding:15pt;border-radius:2pt;text-align:center" onclick="showUser()">Create new User</h5>
         <div id="createUsers" style="display:none">
-            @using (Html.BeginForm("Save", "User"))
+            @using (Html.BeginForm("CreateUser", "Users"))
             {
                 <div class="form-group" style="display:none">
                     @Html.LabelFor(m => m.User.Id)
@@ -79,7 +79,7 @@
                 </div>
                 <div>
                     @Html.LabelFor(c=>c.User.Company.Name, "Select Company")
-                    @Html.DropDownListFor(m => m.User.CompanyId, new SelectList(Model.Company, "Id", "Name"), new { @class = "form-control"})
+                    @Html.DropDownListFor(m => m.User.CompanyName, new SelectList(Model.Company, "Id", "Name"), new { @class = "form-control"})
                 </div>
                 <div>
                     @Html.LabelFor(c => c.User.Type, "Select User Type")

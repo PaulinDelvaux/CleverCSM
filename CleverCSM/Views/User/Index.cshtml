@@ -1,64 +1,60 @@
-﻿@model IEnumerable<CleverCSM.Models.User>
-@*
-    Note: I've set the model for this view to IEnumerable<Customer>.
-    This is a simple interface implemented by the list class. Since
-    in this view we only want to iterate over this list, and we don't
-    need any of the operations in the List class (eg Add, Remove, etc),
-    it's better to use the IEnumerable interface, which allows use to
-    iterate over the list. If in the future, we replace the List with a
-    different data structure, as long as it is enumerable, our view code
-    will remain unchanged.
-*@
-
+﻿
 @{
     ViewBag.Title = "User";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Users</h2>
-@if (!Model.Any())
-{
-    <p>We don't have any users yet.</p>
-}
-else
-{
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Users</th>
-                <th>Email</th>
-                <th>Company</th>
-                <th>UserType</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var c in Model)
-            {
-                var uType="";
-                if (c.Type == 0)
-                {
-                    uType = "SuperAdmin";
-                }
-                else if (c.Type == 1)
-                {
-                    uType = "Admin";
-                }
-                else if (c.Type == 2)
-                {
-                    uType = "User";
-                }
-                else if (c.Type == 3)
-                {
-                    uType = "Contact";
-                }
 
-                <tr>
-                    <td>@Html.ActionLink(c.Name, "Details", "User", new { id = c.Id }, null)</td>
-                    <td>@c.AddressInfo.Email</td>
-                    <td>@c.Company.Name</td>
-                    <td>@uType</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<table id="Users" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Users</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th>UserType</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#Users").DataTable({
+                ajax: {
+                    url: "api/users",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, user) {
+                            return "<a href='/user/details/" + user.Id + "'>" + user.name + "</a>";
+                        }
+                    },
+                    {
+                        data: "addressinfo.email"
+                    },
+                    {
+                        data: "company.name"
+                    },
+                    {
+                        data: "type",
+                        render: function (data) {
+                            var uType = "";
+                            if (data == 0) {uType = "SuperAdmin";}
+                            else if (data == 1) {uType = "Admin";}
+                            else if (data == 2) {uType = "User"; }
+                            else if (data == 3) {uType = "Contact";
+                            }
+                            return uType;
+                        }
+                    }
+                ]
+            });
+        })
+    </script>
 }

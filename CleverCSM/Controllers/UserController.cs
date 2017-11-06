@@ -7,11 +7,16 @@ using CleverCSM.ViewModels;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity.Owin;
+using System.Web;
 
 namespace CleverCSM.Controllers
 {
     public class UserController : Controller
     {
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
         private ApplicationDbContext _context;
 
         public UserController()
@@ -24,20 +29,45 @@ namespace CleverCSM.Controllers
             _context.Dispose();
         }
 
+        public UserController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         public ViewResult Index()
         {
-            var users = _context.User.Include(c=> c.AddressInfo).Include(b => b.Company).ToList();
-
-            return View(users);
+            return View();
         }
 
         public ActionResult Details(int id)
         {
             var user = _context.User.Include(c => c.AddressInfo).Include(c => c.Company).SingleOrDefault(c => c.Id == id);
-            var companycustomer = _context.CompanyCustomer.Where(c=>c.CompanyId ==user.CompanyId).ToList();
-            var exchange = _context.Exhange.Include(c => c.Contact).Include(c => c.User).SingleOrDefault(c => c.UserId == id);
-            var customer = _context.Customer.Include(c => c.AddressInfo).SingleOrDefault(c=>c.Id== user.CompanyId);
+            var exchange = _context.Exchange.Include(c => c.Contact).Include(c => c.User).SingleOrDefault(c => c.User.Id == id);
             var lotsofcustomer = _context.Customer.Include(c => c.AddressInfo).ToList();
             var lotsofcompany = _context.Company.Include(c => c.AddressInfo).ToList();
             var contact = _context.Contact.Include(c => c.Customer).Include(c => c.AddressInfo).Single();
@@ -49,20 +79,19 @@ namespace CleverCSM.Controllers
             var viewModel = new ViewCustomer
             {
                 User = user,
-                Customer = customer,
                 LotsOfCustomer = lotsofcustomer,
                 Company = lotsofcompany
 
             };
      
-            if (user == null || id < 0)
+            if (user == null || id == null)
                 return RedirectToAction("Index", "User");
 
             return View(viewModel);
         }
 
         [HttpPost]
-        public ActionResult Save(User user)
+        public async Task<ActionResult> Save(User user)
         {
             _context.AddressInfo.Add(user.AddressInfo);
             _context.SaveChanges();
@@ -78,8 +107,18 @@ namespace CleverCSM.Controllers
             _context.SaveChanges();
 
             var cInfo = _context.Customer.SingleOrDefault(c => c.AddressInfoId == aInfo.Id);
+            
+            var newuser = new ApplicationUser { UserName = user.Name, Email = user.AddressInfoEmail };
+            await UserManager.CreateAsync(newuser, user.Password);
+            await SignInManager.SignInAsync(newuser, isPersistent: false, rememberBrowser: false);
 
-            return RedirectToAction("Index", "User");
+            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+            // Send an email with this link
+            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+            // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return RedirectToAction("Index", "Home");
         }
 
         static string GetMd5Hash(MD5 md5Hash, string input)

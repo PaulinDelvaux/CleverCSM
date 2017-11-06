@@ -16,7 +16,7 @@ namespace CleverCSM.Migrations
                         InfoTypeId = c.Byte(nullable: false),
                         Address = c.String(),
                         Email = c.String(),
-                        Phone = c.Int(nullable: false),
+                        Phone = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
