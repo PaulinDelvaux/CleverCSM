@@ -18,17 +18,7 @@
                 <tbody></tbody>
             </table>
         </div>
-        <div class="col-md-6" id="allUsers" style="display:none">
-            <table id="Users" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Users</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        <div class="col-md-6" id="allConts" style="display:block">
+        <div class="col-md-6" id="allConts" style="display:none">
             <table id="Contacts" class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -40,21 +30,68 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div id="contactInfomation" style="height: 400pt;border:#ccc 1px solid">
-            <h2 style="text-align:center">Contact Name</h2>
+        <div id="contactInfomation" style="height: 500pt;border:#ccc 1px solid;display:none">
+            <h2 id="conName" style="text-align:center">Contact Name</h2>
             <br />
-            <div class="col-md-8 clearfix">
-                <div class="col-md-3">
+            <div class="col-md-12 clearfix">
+                <div class="col-md-2">
                     <h5 style="font-weight:200">Company:</h5> 
                     <h5 style="font-weight:200">Email:</h5>
                     <h5 style="font-weight:200">Phone:</h5>
                     <h5 style="font-weight:200">Address:</h5>
                 </div>
-                <div class="col-md-6">
-                    <h5 style="font-weight:700">Company name</h5>
-                    <h5 style="font-weight:700">Contact Email</h5>
-                    <h5 style="font-weight:700">Contact Phone</h5>
-                    <h5 style="font-weight:700">Contact Address</h5>
+                <div class="col-md-4">
+                    <h5 id="conCom" style="font-weight:700">Company name</h5>
+                    <h5 id="conMail" style="font-weight:700">Contact Email</h5>
+                    <h5 id="conPhone" style="font-weight:700">Contact Phone</h5>
+                    <h5 id="conAddr" style="font-weight:700">Contact Address</h5>
+                </div>
+                <div class="col-lg-3 text-right">
+                    <div style="width:65pt;margin-left:20pt">
+                        <h5 id="conNextAtt"  style="font-weight:700">18/11/2017</h5>
+                        <h5 id="conLastAtt" style="font-weight:700">4/11/2017</h5>
+                        <h5 id="conNextTry" style="font-weight:700">18/11/2017</h5>
+                        <h5 id="conLastTry" style="font-weight:700">4/11/2017</h5>
+                    </div>
+                </div>
+                <div class="col-md-3 text-left">
+                    <h5 style="font-weight:200">:Next Contact</h5>
+                    <h5 style="font-weight:200">:Last Contact</h5>
+                    <h5 style="font-weight:200">:Next Attempt</h5>
+                    <h5 style="font-weight:200">:Last Attempt</h5>
+                </div>
+            </div>
+            <br/><br/>
+            <div class="col-md-12 clearfix">
+                <div>
+                    <div id="MailBtn" class="col-md-3 btn btn-primary">
+                        Send Mail
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                    <div id="PhoneBtn" class="col-md-3 text-right btn btn-warning">
+                        Phoned Contact
+                    </div>
+                </div>
+            </div>
+            <div id="phoneDiv" class="col-md-12 clearfix" style="display:none">
+                <div style="text-align:center"><h3>Was the call successful?</h3></div>
+                <div class="col-md-3"></div>
+                <div id="yesBtn" class="col-md-3 text-right btn btn-success">
+                    Yes
+                </div>
+                <div id="noBtn" class="col-md-3 text-right btn btn-danger">
+                    No
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div id="mailDiv" class="col-md-12 clearfix" style="display:none">
+                <div style="margin-top:20pt">
+                    <input placeholder="Header" /><br/>
+                    <textarea style="margin-top:10pt;width:100%;max-width:100%;height:200pt" placeholder="Content"></textarea>
+                </div>
+                <div id="sendMailBtn" class="col-md-3 text-right btn btn-success">
+                    Send Mail
                 </div>
             </div>
         </div>
@@ -69,67 +106,147 @@
                 email: document.getElementById("gettheusername").value
             };
 
-            $("#Users").DataTable({
+            var loginsurl;
 
-                ajax: {
-                    url: "api/users",
-                    dataSrc: ""
-                },
-                columns: [
-                    {
-                        data: "name",
-                        render: function (data, type, user) {
-                            if (user.addressInfoEmail == currentUser.email) {
-                                document.getElementById("viewUserName").innerHTML = "Hello "+user.name+"!";
-                                currentUser = user;
-                            }
-                            return "<a href='/user/details/" + user.id + "'>" + user.name + "</a>";
+            $.ajax({
+                url: "api/users",
+                dataSrc: "",
+                success: function (data, type, user) {
+                    for (var q = 0; q < data.length; q++) {
+                        if (data[q].addressInfoEmail == currentUser.email) {
+                            document.getElementById("viewUserName").innerHTML = "Hello " + data[q].name + "!";
+                            currentUser = data[q];
+                            loginsurl = "api/logins/"+currentUser.id;
                         }
                     }
-                ],
-            });
-            $("#Customers").DataTable({
+                    $.ajax({
+                        url: loginsurl,
+                        dataSrc: "",
+                        success: function (data, type, user) {
+                            currentScope = data;
+                            $("#Customers").DataTable({
+                                ajax: {
+                                    url: "api/customers",
+                                    dataSrc: function (customer) {
+                                        var rows = [];
+                                        for (var t = 0; t < customer.length; t++) {
+                                            for (var w = 0; w < currentScope.companyCustomer.length; w++) {
+                                                //skip rows "if a condition is met"
+                                                //here just any rows except row #1
+                                                if (currentScope.companyCustomer[w].customerId == customer[t].id) rows.push(customer[t]);
+                                            }
+                                            return rows;
+                                        }
+                                    }
+                                },
+                                columns: [
+                                    {
+                                        data: "name",
+                                        render: function (data, type, customer) {
+                                            //for (var w = 0; w < currentScope.companyCustomer.length; w++) {
+                                                //if (currentScope.companyCustomer[w].customerId == customer.id)
+                                                    return "<span class='js-cust' data-customer-id=" + customer.id + ">" + customer.name + "</span>";
+                                            //}
 
-                ajax: {
-                    url: "api/customers",
-                    dataSrc: ""
-                },
-                columns: [
-                    {
-                        data: "name",
-                        render: function (data, type, customer) {
-                            return "<a href='/customer/details/" + customer.id + "'>" + customer.name + "</a>";
+                                        }
+                                    }
+                                ],
+                            });
+                            document.getElementById("Customers_info").style.display = 'none';
+                            document.getElementById("Customers_paginate").style.display = 'none';
+                            document.getElementById("Customers_length").style.display = 'none';
                         }
-                    }
-                ],
+                    });
+                }
             });
-            $("#Contacts").DataTable({
-
-                ajax: {
-                    url: "api/contacts",
-                    dataSrc: ""
-                },
-                columns: [
-                    {
-                        data: "name",
-                        render: function (data, type, contacts) {
-                            return "<a href='/contacts/details/" + contacts.id + "'>" + contacts.name + "</a>";
-                        }
-                    }
-                ],
-            });
-
             
-            document.getElementById("Customers_info").style.display = 'none';
-            document.getElementById("Customers_paginate").style.display = 'none';
-            document.getElementById("Customers_length").style.display = 'none';
-            document.getElementById("Contacts_info").style.display = 'none';
-            document.getElementById("Contacts_paginate").style.display = 'none';
-            document.getElementById("Contacts_length").style.display = 'none';
-            document.getElementById("Users_info").style.display = 'none';
-            document.getElementById("Users_paginate").style.display = 'none';
-            document.getElementById("Users_length").style.display = 'none';
 
+            $("#Customers").on("click", ".js-cust", function () {
+                var currentCustomer = this.getAttribute("data-customer-id");
+                document.getElementById("allConts").style.display = 'block';
+                document.getElementById("contactInfomation").style.display = 'none';
+                $("#Contacts").DataTable({
+                    ajax: {
+                        url: "api/contacts",
+                        dataSrc: function (contact) {
+                            var rows = [];
+                            for (var t = 0; t < contact.length; t++) {
+                                if (currentCustomer == contact[t].id) rows.push(contact[t]);
+                            }
+                            return rows;
+                        }
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            render: function (data, type, contact) {
+                                return "<span class='js-cont' data-contact-id=" + contact.id + ">" + contact.name + "</span>";
+                            }
+                        }
+                    ],
+                });
+                document.getElementById("Contacts_info").style.display = 'none';
+                document.getElementById("Contacts_paginate").style.display = 'none';
+                document.getElementById("Contacts_length").style.display = 'none';
+            });
+
+            $("#Contacts").on("click", ".js-cont", function () {
+                var contact = this.getAttribute("data-contact-id");
+                var contactName;
+
+                $.ajax({
+                    url: "api/contacts/" + contact,
+                    dataSrc: "",
+                    success: function (data, type, user) {
+                        currentContact = data;
+                        contactName = data.name;
+                        console.log(currentScope.exchange);
+                        document.getElementById("conName").innerHTML = contactName;
+                        for (var t = 0; t < currentScope.exchange.length; t++) {
+                            if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact) {
+                                var nextcontact = currentScope.exchange[t].nextContact.toString();
+                                var nextcontactyear = nextcontact.substring(0, 4); var nextcontactmonth = nextcontact.substring(5, 7); var nextcontactday = nextcontact.substring(8, 10);
+                                
+                                var lastcontact = currentScope.exchange[t].lastContact.toString();
+                                var lastcontactyear = lastcontact.substring(0, 4); var lastcontactmonth = lastcontact.substring(5, 7); var lastcontactday = lastcontact.substring(8, 10);
+                                
+                                var nextattempt = currentScope.exchange[t].nextTryAttempt.toString();
+                                var nextattemptyear = nextattempt.substring(0, 4); var nextattemptmonth = nextattempt.substring(5, 7); var nextattemptday = nextattempt.substring(8, 10);
+
+                                var lastattempt = currentScope.exchange[t].lastTryAttempt.toString();
+                                var lastattemptyear = lastattempt.substring(0, 4); var lastattemptmonth = lastattempt.substring(5, 7); var lastattemptday = lastattempt.substring(8, 10);
+                                
+                                document.getElementById("conCom").innerHTML = currentScope.exchange[t].contact.customer.name;
+                                document.getElementById("conMail").innerHTML = currentScope.exchange[t].contact.addressInfo.email;
+                                document.getElementById("conPhone").innerHTML = currentScope.exchange[t].contact.addressInfo.phone;
+                                document.getElementById("conAddr").innerHTML = currentScope.exchange[t].contact.addressInfo.address;
+                                document.getElementById("conNextAtt").innerHTML = nextcontactday + "/" + nextcontactmonth + "/" + nextcontactyear;
+                                document.getElementById("conLastAtt").innerHTML = lastcontactday + "/" + lastcontactmonth + "/" + lastcontactyear;
+                                document.getElementById("conNextTry").innerHTML = nextattemptday + "/" + nextattemptmonth + "/" + nextattemptyear;
+                                document.getElementById("conLastTry").innerHTML = lastattemptday + "/" + lastattemptmonth + "/" + lastattemptyear;
+                                document.getElementById("contactInfomation").style.display = 'block';
+                            }
+                        }
+                    }
+                }); 
+
+            });
+
+
+            $("#MailBtn").on("click", function () {
+                if (document.getElementById("mailDiv").style.display == 'block')
+                    document.getElementById("mailDiv").style.display = 'none';
+                else
+                    document.getElementById("mailDiv").style.display = 'block';
+                document.getElementById("phoneDiv").style.display = 'none';
+            });
+            $("#PhoneBtn").on("click", function () {
+                if (document.getElementById("phoneDiv").style.display == 'block')
+                    document.getElementById("phoneDiv").style.display = 'none';
+                else
+                    document.getElementById("phoneDiv").style.display = 'block';
+                document.getElementById("mailDiv").style.display = 'none';
+            });
         })
     </script>
 }

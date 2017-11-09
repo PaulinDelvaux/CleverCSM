@@ -20,13 +20,13 @@ namespace CleverCSM.Controllers.Api
 
         }
 
-        // GET /api/customers
+        // GET /api/exchanges
         public IEnumerable<ExchangeDTO> GetExchange()
         {
             return _context.Exchange.ToList().Select(Mapper.Map<Exchange, ExchangeDTO>);
         }
 
-        // GET /api/customers/1
+        // GET /api/exchanges/1
         public IHttpActionResult GetExchange(int id)
         {
             var exchange = _context.Exchange.SingleOrDefault(c => c.User.Id == id);
@@ -38,7 +38,7 @@ namespace CleverCSM.Controllers.Api
         }
 
 
-        // POST /api/customers
+        // POST /api/exchanges
         [HttpPost]
         public IHttpActionResult CreateExchange(ExchangeDTO exchangedto)
         {
@@ -58,7 +58,7 @@ namespace CleverCSM.Controllers.Api
             return Created(new Uri(Request.RequestUri + "/" + exchangedto.Id), exchangedto);
         }
 
-        // PUT api/customers/1
+        // PUT api/exchanges/1
         [HttpPut]
         public void UpdateExchange(int id, ExchangeDTO exchangedto)
         {
@@ -71,7 +71,7 @@ namespace CleverCSM.Controllers.Api
             _context.SaveChanges();
         }
 
-        //DELETE api/customers/1
+        //DELETE api/exchanges/1
         [HttpDelete]
         public void DeleteExchange(int id)
         {

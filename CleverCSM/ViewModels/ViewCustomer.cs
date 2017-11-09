@@ -28,4 +28,11 @@ namespace CleverCSM.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    public class ViewLogin
+    {
+        public Company Company { get; set; }
+        public IEnumerable<CompanyCustomer> CompanyCustomer { get; set; }
+        public IEnumerable<Exchange> Exchange { get; set; }
+    }
 }

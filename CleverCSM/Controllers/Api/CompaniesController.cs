@@ -37,7 +37,7 @@ namespace CleverCSM.Controllers.Api
             return Ok(Mapper.Map<Company, CompanyDTO>(company));
         }
 
-        // POST /api/customers
+        // POST /api/companies
         [HttpPost]
         public IHttpActionResult CreateCompany(CompanyDTO companydto)
         {

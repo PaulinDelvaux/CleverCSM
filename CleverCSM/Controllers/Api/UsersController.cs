@@ -37,7 +37,7 @@ namespace CleverCSM.Controllers.Api
             return Ok(user);
         }
 
-        // POST /api/sers
+        // POST /api/users
         [HttpPost]
         public IHttpActionResult CreateUser(User user)
         {
