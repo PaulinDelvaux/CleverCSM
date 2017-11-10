@@ -36,10 +36,16 @@
                         }
                     },
                     {
-                        data: "addressinfo.email"
+                        data: "addressInfo",
+                        render: function (data, type, user) {
+                            return user.addressInfo.email
+                        }
                     },
                     {
-                        data: "company.name"
+                        data: "company",
+                        render: function (data, type, user) {
+                            return user.companyName
+                        }
                     },
                     {
                         data: "type",

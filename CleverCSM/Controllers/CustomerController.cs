@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using CleverCSM.Models;
 using CleverCSM.ViewModels;
+using System.Data.Entity;
+
 
 namespace CleverCSM.Controllers
 {
@@ -24,7 +26,7 @@ namespace CleverCSM.Controllers
 
         public ViewResult Index()
         {
-            var customer = _context.Customer.ToList();
+            var customer = _context.Customer.Include(c => c.AddressInfo).ToList();
 
             return View(customer);
         }

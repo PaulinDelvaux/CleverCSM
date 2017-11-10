@@ -9,14 +9,18 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
+            <th>ID</th>
             <th>Customer</th>
+            <th>Email</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var c in Model)
         {
             <tr>
+                <td>@c.Id</td>
                 <td>@c.Name</td>
+                <td>@c.AddressInfo.Email</td>
             </tr>
         }
     </tbody>

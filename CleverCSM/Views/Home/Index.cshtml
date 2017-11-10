@@ -4,9 +4,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <input id="gettheusername" type="hidden" value="@User.Identity.Name" />
-<h2>CleverCSM</h2>
-<br /><br />
-<div class="col-md-12">
+<div class="col-md-12 clearfix" style="border-bottom:2px #ccc solid">
+    <div>
+        <div class="col-md-3">
+            <h2>CleverCSM</h2>
+        </div>
+        <div class="col-md-8">
+        </div>
+        <div id="createCompany" class="col-md-1 text-right btn btn-success" style="margin-top:15pt">
+            Create Company
+        </div>
+    </div>
+</div>
+<br />
+<div class="col-md-12" style="margin-top:5pt">
     <div class="col-md-6">
         <div class="col-md-6" id="allCust" style="display:block">
             <table id="Customers" class="table table-bordered table-hover">
@@ -17,6 +28,7 @@
                 </thead>
                 <tbody></tbody>
             </table>
+            <button id="createCustomer" style="width:100%" class="btn btn-success">Create Customer</button>
         </div>
         <div class="col-md-6" id="allConts" style="display:none">
             <table id="Contacts" class="table table-bordered table-hover">
@@ -27,6 +39,7 @@
                 </thead>
                 <tbody></tbody>
             </table>
+            <div id="createContact" class="btn btn-success">Create Contact</div>
         </div>
     </div>
     <div class="col-md-6">
@@ -108,6 +121,8 @@
 
             var loginsurl;
 
+            var newExchange = [];
+
             $.ajax({
                 url: "api/users",
                 dataSrc: "",
@@ -116,7 +131,7 @@
                         if (data[q].addressInfoEmail == currentUser.email) {
                             document.getElementById("viewUserName").innerHTML = "Hello " + data[q].name + "!";
                             currentUser = data[q];
-                            loginsurl = "api/logins/"+currentUser.id;
+                            loginsurl = "api/logins/" + currentUser.id;
                         }
                     }
                     $.ajax({
@@ -144,17 +159,61 @@
                                         data: "name",
                                         render: function (data, type, customer) {
                                             //for (var w = 0; w < currentScope.companyCustomer.length; w++) {
-                                                //if (currentScope.companyCustomer[w].customerId == customer.id)
-                                                    return "<span class='js-cust' data-customer-id=" + customer.id + ">" + customer.name + "</span>";
+                                            //if (currentScope.companyCustomer[w].customerId == customer.id)
+                                            return "<span class='js-cust' data-customer-id=" + customer.id + ">" + customer.name + "</span>";
                                             //}
 
                                         }
                                     }
                                 ],
                             });
+                            document.getElementById("sidebar").style.display = 'block';
+                            var needContact = 0;
+                            for (var q = 0; q < currentScope.exchange.length; q++) {
+                                var trydate = Date.parse(currentScope.exchange[q].nextContact);
+                                if (Date.now() > trydate) {
+                                    var theDiv = document.getElementById('sidebarclass');
+                                    var span = document.createElement('span');
+                                    span.style.fontWeight = '900';
+                                    var span2 = document.createElement('span');
+                                    span2.style.fontWeight = '900';
+                                    span.appendChild(document.createTextNode("Contact: "));
+
+                                    theDiv.appendChild(span);
+                                    theDiv.appendChild(document.createTextNode(currentScope.exchange[q].contact.name));
+                                    theDiv.appendChild(document.createElement('br'));
+                                    span2.appendChild(document.createTextNode("Company: "));
+                                    theDiv.appendChild(span2);
+                                    theDiv.appendChild(document.createTextNode(currentScope.exchange[q].contact.customer.name));
+                                    if (currentUser.type == 0 && currentScope.exchange[q].user.id != currentUser.id) {
+                                        theDiv.appendChild(document.createElement('br'));
+                                        var span3 = document.createElement('span');
+                                        span3.style.fontWeight = '900';
+                                        span3.appendChild(document.createTextNode("User: "));
+                                        theDiv.appendChild(span3);
+                                        theDiv.appendChild(document.createTextNode(currentScope.exchange[q].user.name));
+                                    }
+                                    theDiv.appendChild(document.createElement('br'));
+                                    theDiv.appendChild(document.createElement('br'));
+                                    
+
+                                    needContact++;
+                                }
+                            }
+                            console.log(needContact);
+                            if (needContact == 0) {
+                                console.log("WO");
+                                var theDiv = document.getElementById('sidebarclass');
+                                var span = document.createElement('span');
+                                span.style.fontWeight = '900';
+                                span.appendChild(document.createTextNode("No one. Good job!"));
+                                theDiv.appendChild(span);
+                            }
+
                             document.getElementById("Customers_info").style.display = 'none';
                             document.getElementById("Customers_paginate").style.display = 'none';
                             document.getElementById("Customers_length").style.display = 'none';
+                            document.getElementById("createCustomer").style.display = 'block';
                         }
                     });
                 }
@@ -162,10 +221,13 @@
             
 
             $("#Customers").on("click", ".js-cust", function () {
+                $('#Contacts tbody').empty();
+
                 var currentCustomer = this.getAttribute("data-customer-id");
                 document.getElementById("allConts").style.display = 'block';
                 document.getElementById("contactInfomation").style.display = 'none';
                 $("#Contacts").DataTable({
+                    destroy: true,
                     ajax: {
                         url: "api/contacts",
                         dataSrc: function (contact) {
@@ -188,6 +250,7 @@
                 document.getElementById("Contacts_info").style.display = 'none';
                 document.getElementById("Contacts_paginate").style.display = 'none';
                 document.getElementById("Contacts_length").style.display = 'none';
+                document.getElementById("createContact").style.display = 'block';
             });
 
             $("#Contacts").on("click", ".js-cont", function () {
@@ -200,12 +263,15 @@
                     success: function (data, type, user) {
                         currentContact = data;
                         contactName = data.name;
-                        console.log(currentScope.exchange);
                         document.getElementById("conName").innerHTML = contactName;
                         for (var t = 0; t < currentScope.exchange.length; t++) {
                             if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact) {
+                                newExchange = currentScope.exchange[t];
                                 var nextcontact = currentScope.exchange[t].nextContact.toString();
                                 var nextcontactyear = nextcontact.substring(0, 4); var nextcontactmonth = nextcontact.substring(5, 7); var nextcontactday = nextcontact.substring(8, 10);
+
+                                var trydate = Date.parse(currentScope.exchange[t].nextContact);
+                                var attemptdate = Date.parse(currentScope.exchange[t].nextTryAttempt)
                                 
                                 var lastcontact = currentScope.exchange[t].lastContact.toString();
                                 var lastcontactyear = lastcontact.substring(0, 4); var lastcontactmonth = lastcontact.substring(5, 7); var lastcontactday = lastcontact.substring(8, 10);
@@ -225,6 +291,13 @@
                                 document.getElementById("conNextTry").innerHTML = nextattemptday + "/" + nextattemptmonth + "/" + nextattemptyear;
                                 document.getElementById("conLastTry").innerHTML = lastattemptday + "/" + lastattemptmonth + "/" + lastattemptyear;
                                 document.getElementById("contactInfomation").style.display = 'block';
+
+                                if (Date.now() > trydate) {
+                                    document.getElementById("conNextAtt").style.color = 'red';
+                                }
+                                if (Date.now() > attemptdate) {
+                                    document.getElementById("conNextTry").style.color = 'red';
+                                }
                             }
                         }
                     }
@@ -234,6 +307,7 @@
 
 
             $("#MailBtn").on("click", function () {
+                //window.open('mailto:test@example.com');
                 if (document.getElementById("mailDiv").style.display == 'block')
                     document.getElementById("mailDiv").style.display = 'none';
                 else
@@ -246,6 +320,55 @@
                 else
                     document.getElementById("phoneDiv").style.display = 'block';
                 document.getElementById("mailDiv").style.display = 'none';
+            });
+            $("#yesBtn").on("click", function () {
+                for (var t = 0; t < currentScope.exchange.length; t++) {
+                    if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == currentContact.id) {
+                        newExchange = currentScope.exchange[t];
+                        console.log("new");
+                        console.log(newExchange);
+
+                        newDate.setDate(newDate.getDate() + newExchange.frequency);
+
+                        newExchange.priority = 3;
+                        
+                        $.ajax({
+                            url: "/api/exchanges",
+                            method: "PUT",
+                            data: newExchange
+                        })
+
+                        window.location.reload();
+                    }
+                }
+
+            });
+            $("#noBtn").on("click", function () {
+                for (var t = 0; t < currentScope.exchange.length; t++) {
+                    if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == currentContact.id) {
+                        newExchange = currentScope.exchange[t];
+
+                        var date = new Date();
+                        date.setDate(date.getDate() + 2);
+
+                        var trydate = Date.parse(currentScope.exchange[t].nextContact);
+
+                        if (trydate > date) 
+                            newExchange.priority = 2;
+                        else
+                            newExchange.priority = 1;
+                        
+
+                        $.ajax({
+                            url: "/api/exchanges",
+                            method: "PUT",
+                            data: newExchange
+                        })
+
+                        setTimeout(function () { window.location.reload(); }, 200);
+                    }
+                }
+
             });
         })
     </script>

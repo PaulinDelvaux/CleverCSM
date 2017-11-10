@@ -29,7 +29,7 @@ namespace CleverCSM.Controllers.Api
         // GET /api/exchanges/1
         public IHttpActionResult GetExchange(int id)
         {
-            var exchange = _context.Exchange.SingleOrDefault(c => c.User.Id == id);
+            var exchange = _context.Exchange.Include(c=>c.Contact).Include(c=>c.User).SingleOrDefault(c => c.User.Id == id);
 
             if (exchange == null)
                 return NotFound();
@@ -60,14 +60,35 @@ namespace CleverCSM.Controllers.Api
 
         // PUT api/exchanges/1
         [HttpPut]
-        public void UpdateExchange(int id, ExchangeDTO exchangedto)
+        public void UpdateExchange(ExchangeDTO exchangedto)
         {
-            var exchange = Mapper.Map<ExchangeDTO, Exchange>(exchangedto);
+            var Inputexchange = Mapper.Map<ExchangeDTO, Exchange>(exchangedto);
 
-            if (exchange == null)
+            if (Inputexchange == null)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            _context.Exchange.Add(exchange);
+            var exchange = _context.Exchange.SingleOrDefault(c => c.Id == exchangedto.Id);
+
+            var priority = Inputexchange.Priority;
+
+            if (priority == 3)
+            {
+                exchange.LastContact = DateTime.Now;
+                exchange.NextContact = DateTime.Now.AddDays(exchangedto.Frequency);
+                exchange.LastTryAttempt = DateTime.Now;
+                exchange.NextTryAttempt = DateTime.Now.AddDays(exchangedto.Frequency);
+            }
+            if (priority == 2)
+            {
+                exchange.LastTryAttempt = DateTime.Now;
+                exchange.NextTryAttempt = DateTime.Now.AddDays(2);
+            }
+            if (priority == 1)
+            {
+                exchange.LastTryAttempt = DateTime.Now;
+                exchange.NextTryAttempt = DateTime.Now.AddDays(1);
+            }
+            
             _context.SaveChanges();
         }
 
