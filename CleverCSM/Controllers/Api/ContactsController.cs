@@ -42,21 +42,11 @@ namespace CleverCSM.Controllers.Api
         public IHttpActionResult CreateContact(ContactDTO contactdto)
         {
             var contact = Mapper.Map<ContactDTO, Contact>(contactdto);
-            var addressinfo = Mapper.Map<AddressInfoDTO, AddressInfo>(contactdto.AddressInfo);
-            
-            _context.AddressInfo.Add(addressinfo);
-            _context.SaveChanges();
-
-            var aInfo = _context.AddressInfo.SingleOrDefault(c => c.Email == contactdto.AddressInfo.Email && c.Address == contactdto.AddressInfo.Address && c.Phone == contactdto.AddressInfo.Phone);
-
-            contactdto.AddressInfoId = aInfo.Id;
 
             _context.Contact.Add(contact);
             _context.SaveChanges();
 
-            contactdto.Id = contact.Id;
-
-            return Created(new Uri(Request.RequestUri + "/" + contactdto.Id), contactdto);
+            return Ok(Mapper.Map<Contact, ContactDTO>(contact));
         }
 
         // PUT api/contacts/1

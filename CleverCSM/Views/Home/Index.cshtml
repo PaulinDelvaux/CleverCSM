@@ -137,11 +137,16 @@
                 </div>
             </div>
             <div id="creatingContact" style="padding-left:20pt;display:none">
+                <span id="creatingContactNameError" style="color:red"></span>
                 <input id="ContactName" type="text" class="form-control" placeholder="Name" /><br />
+                <span id="creatingContactMailError" style="color:red"></span>
                 <input id="ContactEmail" type="email" class="form-control" placeholder="Email" /><br />
+                <span id="creatingContactAddressError" style="color:red"></span>
                 <input id="ContactAddress" type="text" class="form-control" placeholder="Address" /><br />
+                <span id="creatingContactPhoneError" style="color:red"></span>
                 <input id="ContactPhone" type="tel" class="form-control" placeholder="Phone" /><br />
-                <input id="ContactFreqeuncy" type="number" class="form-control" placeholder="Contact frequency in days" /><br />
+                <span id="creatingContactFrequencyError" style="color:red"></span>
+                <input id="ContactFreqeuncy" type="number" class="form-control" min="1" max="365" placeholder="Contact frequency in days" /><br />
                 <div id="createContactBtn" class="text-right btn btn-primary" style="width:100pt">
                     Create
                 </div>
@@ -157,6 +162,8 @@
             var currentUser = {
                 email: document.getElementById("gettheusername").value
             };
+
+            var currentCustomer = 0;
 
             var loginsurl;
 
@@ -269,7 +276,8 @@
 
                 document.getElementById("createInformation").style.display = 'none';
 
-                var currentCustomer = this.getAttribute("data-customer-id");
+                currentCustomer = this.getAttribute("data-customer-id");
+                console.log("CurrentCustomer: " + currentCustomer);
                 document.getElementById("allConts").style.display = 'block';
                 document.getElementById("contactInfomation").style.display = 'none';
                 $("#Contacts").DataTable({
@@ -278,11 +286,6 @@
                         url: "api/contacts",
                         dataSrc: function (contact) {
                             var rows = [];
-                            console.log("Exchanges");
-                            console.log(currentScope.exchange);
-                            console.log("Contact");
-                            console.log(contact);
-                            console.log(contact.length);
                             if (currentUser.type == 2) {
                                 for (var q = 0; q < contact.length; q++) {
                                     for (var t = 0; t < currentScope.exchange.length; t++) {
@@ -301,7 +304,6 @@
                                     }
                                 }
                             }
-                            console.log(rows)
                             return rows;
                         }
                     },
@@ -334,7 +336,7 @@
                         contactName = data.name;
                         document.getElementById("conName").innerHTML = contactName;
                         for (var t = 0; t < currentScope.exchange.length; t++) {
-                            if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact) {
+                            if ((currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact) || (currentUser.type < 2 && currentScope.exchange[t].contactId == contact)) {
 
                                 document.getElementById("responsibleUser").style.display = 'none';
                                 if (currentUser.type < 2) {
@@ -603,6 +605,93 @@
                     data: newCompany
                 })
 
+                setTimeout(function () { window.location.reload(); }, 200);
+            });
+
+            $("#createContactBtn").on("click", function () {
+                var errors = 0;
+
+                if ($('#ContactName').val() == "") { document.getElementById("creatingContactNameError").innerHTML = "Name is required"; errors++; }
+                else
+                    document.getElementById("creatingContactNameError").innerHTML = "";
+
+                if ($('#ContactEmail').val() == "") { document.getElementById("creatingContactMailError").innerHTML = "ERROR"; errors++; }
+                else if (!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test($('#ContactEmail').val()))) { document.getElementById("creatingContactMailError").innerHTML = "Invalid email"; errors++; }
+                else
+                    document.getElementById("creatingContactMailError").innerHTML = "";
+
+                if ($('#ContactAddress').val() == "") { document.getElementById("creatingContactAddressError").innerHTML = "Address is required"; errors++; }
+                else
+                    document.getElementById("creatingContactAddressError").innerHTML = "";
+
+                if ($('#ContactPhone').val() == "") { document.getElementById("creatingContactPhoneError").innerHTML = "Phone is Required"; errors++; }
+                else if (isNaN($('#ContactPhone').val())) { document.getElementById("creatingContactPhoneError").innerHTML = "Only digits"; errors++; }
+                else if ($('#ContactPhone').val().length != 8) { document.getElementById("creatingContactPhoneError").innerHTML = "Phone is 8 digits"; errors++; }
+                else
+                    document.getElementById("creatingContactPhoneError").innerHTML = "";
+
+                if (document.getElementById("ContactFreqeuncy").value == "") { document.getElementById("creatingContactFrequencyError").innerHTML = "Frequency is required"; errors++; }
+                else if (document.getElementById("ContactFreqeuncy").value < 1) { document.getElementById("creatingContactFrequencyError").innerHTML = "Frequency can't be lower than 1"; errors++; }
+                else if (document.getElementById("ContactFreqeuncy").value > 365) { document.getElementById("creatingContactFrequencyError").innerHTML = "Frequency can't be higher than 365"; errors++; }
+                else
+                    document.getElementById("creatingContactFrequencyError").innerHTML = "";
+
+                if (errors != 0)
+                    return;
+
+                var newContact = {
+                    id: "",
+                    name: "",
+                    customerId:"",
+                    addressInfoId: "",
+                    addressInfo: {
+                        id: "",
+                        address: "",
+                        email: "",
+                        phone: ""
+                    }
+                };
+
+                var newExchange = {
+                    priority: 3,
+                    companyCustomerId: "",
+                    userId: currentUser.id,
+                    contactId: "",
+                    frequency: document.getElementById("ContactFreqeuncy").value
+                };
+                
+                newContact.name = $('#ContactName').val();
+                newContact.customerId = currentCustomer;
+                newContact.addressInfo.address = $('#ContactAddress').val();
+                newContact.addressInfo.phone = $('#ContactPhone').val();
+                newContact.addressInfo.email = $('#ContactEmail').val();
+
+                console.log("NewContact");
+                console.log(newContact);
+
+                var currentCompId = currentScope.companyCustomer[0].companyId
+
+                $.ajax({
+                    url: "/api/contacts",
+                    method: "Post",
+                    data: newContact,
+                    success: function (response) {
+                        console.log(response.id);
+                        for (var q = 0; q < currentScope.companyCustomer.length; q++) {
+                            if (currentScope.companyCustomer[q].companyId == currentCompId && currentScope.companyCustomer[q].customerId == currentCustomer) {
+                                console.log(response);
+                                newExchange.contactId = response.id;
+                                newExchange.companyCustomerId = currentScope.companyCustomer[q].id;
+                                $.ajax({
+                                    url: "/api/exchanges",
+                                    method: "Post",
+                                    data: newExchange,
+                                })
+                            }
+                        }
+                    }
+                })
+                
                 setTimeout(function () { window.location.reload(); }, 200);
             });
 

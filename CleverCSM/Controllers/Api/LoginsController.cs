@@ -24,7 +24,7 @@ namespace CleverCSM.Controllers.Api
             var user = _context.User.Include(c => c.AddressInfo).Include(c => c.Company).SingleOrDefault(c => c.Id == id);
             var company = _context.Company.Single(c => c.Name == user.CompanyName);
             var companycustomer = _context.CompanyCustomer.Where(c=>c.CompanyId==company.Id).ToList();
-            var exchange = _context.Exchange.Include(c => c.Contact).Include(c => c.User).Include(c => c.Contact.AddressInfo).Include(c => c.User.AddressInfo).Include(c => c.Contact.Customer).Include(c => c.User.Company).Where(c => c.User.Id == id).ToList();
+            var exchange = _context.Exchange.Include(c => c.Contact).Include(c => c.User).Include(c => c.Contact.AddressInfo).Include(c => c.User.AddressInfo).Include(c => c.Contact.Customer).Include(c => c.User.Company).ToList();
            
             if (exchange == null)
                 return NotFound();

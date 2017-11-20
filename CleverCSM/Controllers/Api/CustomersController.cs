@@ -41,8 +41,7 @@ namespace CleverCSM.Controllers.Api
         public IHttpActionResult CreateCustomer(CustomerDTO customerdto)
         {
             var customer = Mapper.Map<CustomerDTO, Customer>(customerdto);
-            var addressinfo = Mapper.Map<AddressInfoDTO, AddressInfo>(customerdto.AddressInfo);
-
+            
             var companyId = customerdto.Id;
 
             _context.Customer.Add(customer);
