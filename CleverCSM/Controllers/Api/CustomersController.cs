@@ -45,17 +45,10 @@ namespace CleverCSM.Controllers.Api
 
             var companyId = customerdto.Id;
 
-            _context.AddressInfo.Add(addressinfo);
-            _context.SaveChanges();
-
-            var aInfo = _context.AddressInfo.SingleOrDefault(c => c.Email == customerdto.AddressInfo.Email && c.Address == customerdto.AddressInfo.Address && c.Phone == customerdto.AddressInfo.Phone);
-
-            customerdto.AddressInfoId = aInfo.Id;
-
             _context.Customer.Add(customer);
             _context.SaveChanges();
 
-            var cInfo = _context.Customer.SingleOrDefault(c => c.AddressInfoId == aInfo.Id);
+            var cInfo = _context.Customer.SingleOrDefault(c => c.AddressInfoId == customer.AddressInfoId);
 
             var combineInfo = new CompanyCustomer
             {
@@ -68,7 +61,7 @@ namespace CleverCSM.Controllers.Api
 
             customerdto.Id = customer.Id;
 
-            return Created(new Uri(Request.RequestUri+"/"+customerdto.Id),customerdto);
+            return Ok(Mapper.Map<Customer, CustomerDTO>(customer));
         }
 
         // PUT api/customers/1

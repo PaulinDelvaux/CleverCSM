@@ -71,6 +71,13 @@ namespace CleverCSM.Models
 
         [Required]
         [StringLength(255)]
+        [Display(Name = "Company")]
+        public string CompanyName { get; set; }
+
+        public IEnumerable<Company> Company { get; set; }
+
+        [Required]
+        [StringLength(255)]
         public string Address { get; set; }
         
         [Required]

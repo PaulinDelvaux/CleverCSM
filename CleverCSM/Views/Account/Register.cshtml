@@ -7,7 +7,6 @@
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
-    @Html.AntiForgeryToken()
     <h4>Create a new account.</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
@@ -35,6 +34,10 @@
             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
         </div>
     </div>
+    <div style="margin-left:162pt;padding-bottom:15pt">
+        @Html.LabelFor(c => c.CompanyName, "Select Company")
+        @Html.DropDownListFor(m => m.CompanyName, new SelectList(Model.Company, "Name","Name"), new { @class = "form-control" })
+    </div>
     <div class="form-group">
         @Html.LabelFor(m => m.NumberOfPhone, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
@@ -49,6 +52,7 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
+            @Html.AntiForgeryToken()
             <input type="submit" class="btn btn-default" value="Register" />
         </div>
     </div>

@@ -224,18 +224,6 @@
     <Compile Include="Migrations\201710222009138_AddTotalDb.Designer.cs">
       <DependentUpon>201710222009138_AddTotalDb.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710222015512_AddUser.cs" />
-    <Compile Include="Migrations\201710222015512_AddUser.Designer.cs">
-      <DependentUpon>201710222015512_AddUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710222016571_AddUserToCustomer.cs" />
-    <Compile Include="Migrations\201710222016571_AddUserToCustomer.Designer.cs">
-      <DependentUpon>201710222016571_AddUserToCustomer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710222021367_UpdateCSMModel.cs" />
-    <Compile Include="Migrations\201710222021367_UpdateCSMModel.Designer.cs">
-      <DependentUpon>201710222021367_UpdateCSMModel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201710222025404_AddedDbs.cs" />
     <Compile Include="Migrations\201710222025404_AddedDbs.Designer.cs">
       <DependentUpon>201710222025404_AddedDbs.cs</DependentUpon>
@@ -284,9 +272,9 @@
     <Compile Include="Migrations\201711051603338_RemovePhoneFromAspNetUser.Designer.cs">
       <DependentUpon>201711051603338_RemovePhoneFromAspNetUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201711051611340_PhoneToString.cs" />
-    <Compile Include="Migrations\201711051611340_PhoneToString.Designer.cs">
-      <DependentUpon>201711051611340_PhoneToString.cs</DependentUpon>
+    <Compile Include="Migrations\201711181245424_requiredMail.cs" />
+    <Compile Include="Migrations\201711181245424_requiredMail.Designer.cs">
+      <DependentUpon>201711181245424_requiredMail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AddressInfo.cs" />
@@ -634,15 +622,6 @@
     <EmbeddedResource Include="Migrations\201710222009138_AddTotalDb.resx">
       <DependentUpon>201710222009138_AddTotalDb.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222015512_AddUser.resx">
-      <DependentUpon>201710222015512_AddUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222016571_AddUserToCustomer.resx">
-      <DependentUpon>201710222016571_AddUserToCustomer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710222021367_UpdateCSMModel.resx">
-      <DependentUpon>201710222021367_UpdateCSMModel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710222025404_AddedDbs.resx">
       <DependentUpon>201710222025404_AddedDbs.cs</DependentUpon>
     </EmbeddedResource>
@@ -679,8 +658,8 @@
     <EmbeddedResource Include="Migrations\201711051603338_RemovePhoneFromAspNetUser.resx">
       <DependentUpon>201711051603338_RemovePhoneFromAspNetUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711051611340_PhoneToString.resx">
-      <DependentUpon>201711051611340_PhoneToString.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201711181245424_requiredMail.resx">
+      <DependentUpon>201711181245424_requiredMail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -6,12 +6,10 @@
 <input id="gettheusername" type="hidden" value="@User.Identity.Name" />
 <div class="col-md-12 clearfix" style="border-bottom:2px #ccc solid">
     <div>
-        <div class="col-md-3">
+        <div class="col-md-10">
             <h2>CleverCSM</h2>
         </div>
-        <div class="col-md-8">
-        </div>
-        <div id="createCompany" class="col-md-1 text-right btn btn-success" style="margin-top:15pt">
+        <div id="createCompany" class="col-md-2 text-right btn btn-success" style="margin-top:15pt;display:none">
             Create Company
         </div>
     </div>
@@ -28,7 +26,7 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <button id="createCustomer" style="width:100%" class="btn btn-success">Create Customer</button>
+            <button id="createCustomer" style="width:100%;display:none" class="btn btn-success">Create Customer</button>
         </div>
         <div class="col-md-6" id="allConts" style="display:none">
             <table id="Contacts" class="table table-bordered table-hover">
@@ -45,6 +43,7 @@
     <div class="col-md-6">
         <div id="contactInfomation" style="height: 500pt;border:#ccc 1px solid;display:none">
             <h2 id="conName" style="text-align:center">Contact Name</h2>
+            <h5 id="responsibleUser" style="text-align:center;display:none"></h5>
             <br />
             <div class="col-md-12 clearfix">
                 <div class="col-md-2">
@@ -88,7 +87,7 @@
                 </div>
             </div>
             <div id="phoneDiv" class="col-md-12 clearfix" style="display:none">
-                <div style="text-align:center"><h3>Was the call successful?</h3></div>
+                <div style="text-align:center"><h3>Was the it successful?</h3></div>
                 <div class="col-md-3"></div>
                 <div id="yesBtn" class="col-md-3 text-right btn btn-success">
                     Yes
@@ -100,11 +99,51 @@
             </div>
             <div id="mailDiv" class="col-md-12 clearfix" style="display:none">
                 <div style="margin-top:20pt">
-                    <input placeholder="Header" /><br/>
-                    <textarea style="margin-top:10pt;width:100%;max-width:100%;height:200pt" placeholder="Content"></textarea>
+                    <input id="MailHeader" placeholder="Header" /><br/>
+                    <textarea id="MailBody" style="margin-top:10pt;width:100%;max-width:100%;height:200pt" placeholder="Content"></textarea>
                 </div>
                 <div id="sendMailBtn" class="col-md-3 text-right btn btn-success">
                     Send Mail
+                </div>
+            </div>
+        </div>
+        <div id="createInformation" style="height: 500pt;border:#ccc 1px solid;display:none">
+            <h2 id="createTypeName" style="text-align:center"></h2>
+            <br />
+            <div id="creatingCustomer" style="padding-left:20pt;display:none">
+                <span id="creatingCustomerNameError" style="color:red"></span>
+                <input id="CustomerName" type="text" class="form-control" placeholder="Name" /><br />
+                <span id="creatingCustomerMailError" style="color:red"></span>
+                <input id="CustomerEmail" type="email" class="form-control" placeholder="Email" /><br />
+                <span id="creatingCustomerAddressError" style="color:red"></span>
+                <input id="CustomerAddress" type="text" class="form-control" placeholder="Address" /><br />
+                <span id="creatingCustomerPhoneError" style="color:red"></span>
+                <input id="CustomerPhone" type="tel" class="form-control" placeholder="Phone" /><br />
+                <div id="createCustomerBtn" class="text-right btn btn-primary" style="width:100pt">
+                    Create
+                </div>
+            </div>
+            <div id="creatingCompany" style="padding-left:20pt;display:none">
+                <span id="creatingCompanyNameError" style="color:red"></span>
+                <input id="CompanyName" type="text" class="form-control" placeholder="Name" /><br />
+                <span id="creatingCompanyMailError" style="color:red"></span>
+                <input id="CompanyEmail" type="email" class="form-control" placeholder="Email" /><br />
+                <span id="creatingCompanyAddressError" style="color:red"></span>
+                <input id="CompanyAddress" type="text" class="form-control" placeholder="Address" /><br />
+                <span id="creatingCompanyPhoneError" style="color:red"></span>
+                <input id="CompanyPhone" type="tel" class="form-control" placeholder="Phone" /><br />
+                <div id="createCompanyBtn" class="text-right btn btn-primary" style="width:100pt">
+                    Create
+                </div>
+            </div>
+            <div id="creatingContact" style="padding-left:20pt;display:none">
+                <input id="ContactName" type="text" class="form-control" placeholder="Name" /><br />
+                <input id="ContactEmail" type="email" class="form-control" placeholder="Email" /><br />
+                <input id="ContactAddress" type="text" class="form-control" placeholder="Address" /><br />
+                <input id="ContactPhone" type="tel" class="form-control" placeholder="Phone" /><br />
+                <input id="ContactFreqeuncy" type="number" class="form-control" placeholder="Contact frequency in days" /><br />
+                <div id="createContactBtn" class="text-right btn btn-primary" style="width:100pt">
+                    Create
                 </div>
             </div>
         </div>
@@ -146,12 +185,13 @@
                                         var rows = [];
                                         for (var t = 0; t < customer.length; t++) {
                                             for (var w = 0; w < currentScope.companyCustomer.length; w++) {
-                                                //skip rows "if a condition is met"
-                                                //here just any rows except row #1
-                                                if (currentScope.companyCustomer[w].customerId == customer[t].id) rows.push(customer[t]);
+                                                if (currentScope.companyCustomer[w].customerId == customer[t].id) {
+                                                    rows.push(customer[t]);
+                                                }
                                             }
-                                            return rows;
+
                                         }
+                                        return rows;
                                     }
                                 },
                                 columns: [
@@ -166,7 +206,7 @@
                                         }
                                     }
                                 ],
-                            });
+                            })
                             document.getElementById("sidebar").style.display = 'block';
                             var needContact = 0;
                             for (var q = 0; q < currentScope.exchange.length; q++) {
@@ -195,14 +235,12 @@
                                     }
                                     theDiv.appendChild(document.createElement('br'));
                                     theDiv.appendChild(document.createElement('br'));
-                                    
+
 
                                     needContact++;
                                 }
                             }
-                            console.log(needContact);
                             if (needContact == 0) {
-                                console.log("WO");
                                 var theDiv = document.getElementById('sidebarclass');
                                 var span = document.createElement('span');
                                 span.style.fontWeight = '900';
@@ -213,15 +251,23 @@
                             document.getElementById("Customers_info").style.display = 'none';
                             document.getElementById("Customers_paginate").style.display = 'none';
                             document.getElementById("Customers_length").style.display = 'none';
-                            document.getElementById("createCustomer").style.display = 'block';
+
+                            if (currentUser.type < 2)
+                                document.getElementById("createCustomer").style.display = 'block';
+
+                            if (currentUser.type==0)
+                                document.getElementById("createCompany").style.display = 'block';
+
                         }
                     });
                 }
             });
-            
+
 
             $("#Customers").on("click", ".js-cust", function () {
                 $('#Contacts tbody').empty();
+
+                document.getElementById("createInformation").style.display = 'none';
 
                 var currentCustomer = this.getAttribute("data-customer-id");
                 document.getElementById("allConts").style.display = 'block';
@@ -232,9 +278,30 @@
                         url: "api/contacts",
                         dataSrc: function (contact) {
                             var rows = [];
-                            for (var t = 0; t < contact.length; t++) {
-                                if (currentCustomer == contact[t].id) rows.push(contact[t]);
+                            console.log("Exchanges");
+                            console.log(currentScope.exchange);
+                            console.log("Contact");
+                            console.log(contact);
+                            console.log(contact.length);
+                            if (currentUser.type == 2) {
+                                for (var q = 0; q < contact.length; q++) {
+                                    for (var t = 0; t < currentScope.exchange.length; t++) {
+                                        if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact[q].id && contact[q].customerId == currentCustomer) {
+                                            rows.push(contact[q]);
+                                        }
+                                    }
+                                }
                             }
+                            if (currentUser.type < 2) {
+                                for (var q = 0; q < contact.length; q++) {
+                                    for (var t = 0; t < currentScope.companyCustomer.length; t++) {
+                                        if (currentScope.companyCustomer[t].customerId == currentCustomer && contact[q].customerId == currentCustomer) {
+                                            rows.push(contact[q]);
+                                        }
+                                    }
+                                }
+                            }
+                            console.log(rows)
                             return rows;
                         }
                     },
@@ -257,6 +324,8 @@
                 var contact = this.getAttribute("data-contact-id");
                 var contactName;
 
+                document.getElementById("createInformation").style.display = 'none';
+
                 $.ajax({
                     url: "api/contacts/" + contact,
                     dataSrc: "",
@@ -266,22 +335,28 @@
                         document.getElementById("conName").innerHTML = contactName;
                         for (var t = 0; t < currentScope.exchange.length; t++) {
                             if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == contact) {
+
+                                document.getElementById("responsibleUser").style.display = 'none';
+                                if (currentUser.type < 2) {
+                                    document.getElementById("responsibleUser").innerHTML = currentScope.exchange[t].user.name;
+                                    document.getElementById("responsibleUser").style.display = 'block';
+                                }
                                 newExchange = currentScope.exchange[t];
                                 var nextcontact = currentScope.exchange[t].nextContact.toString();
                                 var nextcontactyear = nextcontact.substring(0, 4); var nextcontactmonth = nextcontact.substring(5, 7); var nextcontactday = nextcontact.substring(8, 10);
 
                                 var trydate = Date.parse(currentScope.exchange[t].nextContact);
                                 var attemptdate = Date.parse(currentScope.exchange[t].nextTryAttempt)
-                                
+
                                 var lastcontact = currentScope.exchange[t].lastContact.toString();
                                 var lastcontactyear = lastcontact.substring(0, 4); var lastcontactmonth = lastcontact.substring(5, 7); var lastcontactday = lastcontact.substring(8, 10);
-                                
+
                                 var nextattempt = currentScope.exchange[t].nextTryAttempt.toString();
                                 var nextattemptyear = nextattempt.substring(0, 4); var nextattemptmonth = nextattempt.substring(5, 7); var nextattemptday = nextattempt.substring(8, 10);
 
                                 var lastattempt = currentScope.exchange[t].lastTryAttempt.toString();
                                 var lastattemptyear = lastattempt.substring(0, 4); var lastattemptmonth = lastattempt.substring(5, 7); var lastattemptday = lastattempt.substring(8, 10);
-                                
+
                                 document.getElementById("conCom").innerHTML = currentScope.exchange[t].contact.customer.name;
                                 document.getElementById("conMail").innerHTML = currentScope.exchange[t].contact.addressInfo.email;
                                 document.getElementById("conPhone").innerHTML = currentScope.exchange[t].contact.addressInfo.phone;
@@ -301,19 +376,31 @@
                             }
                         }
                     }
-                }); 
+                });
 
             });
 
 
             $("#MailBtn").on("click", function () {
-                //window.open('mailto:test@example.com');
                 if (document.getElementById("mailDiv").style.display == 'block')
                     document.getElementById("mailDiv").style.display = 'none';
                 else
                     document.getElementById("mailDiv").style.display = 'block';
                 document.getElementById("phoneDiv").style.display = 'none';
             });
+
+            $("#sendMailBtn").on("click", function () {
+                //window.open("mailto:" + currentContact.addressInfo.email + "?subject=" + document.getElementById('MailHeader').innerHTML);
+                var subject = $('#MailHeader').val();
+                var body = $('#MailBody').val();
+                var mail = 'mailto:' + currentContact.addressInfo.email + '?subject='+subject+'&body='+body;
+
+                $('<iframe src="' + mail + '">').appendTo('body').css("display", "none");
+
+                document.getElementById("mailDiv").style.display = 'none';
+                document.getElementById("phoneDiv").style.display = 'block';
+            });
+
             $("#PhoneBtn").on("click", function () {
                 if (document.getElementById("phoneDiv").style.display == 'block')
                     document.getElementById("phoneDiv").style.display = 'none';
@@ -325,39 +412,11 @@
                 for (var t = 0; t < currentScope.exchange.length; t++) {
                     if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == currentContact.id) {
                         newExchange = currentScope.exchange[t];
-                        console.log("new");
-                        console.log(newExchange);
 
-                        newDate.setDate(newDate.getDate() + newExchange.frequency);
+                        newExchange.contact = currentContact;
+                        newExchange.user = currentUser;
 
                         newExchange.priority = 3;
-                        
-                        $.ajax({
-                            url: "/api/exchanges",
-                            method: "PUT",
-                            data: newExchange
-                        })
-
-                        window.location.reload();
-                    }
-                }
-
-            });
-            $("#noBtn").on("click", function () {
-                for (var t = 0; t < currentScope.exchange.length; t++) {
-                    if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == currentContact.id) {
-                        newExchange = currentScope.exchange[t];
-
-                        var date = new Date();
-                        date.setDate(date.getDate() + 2);
-
-                        var trydate = Date.parse(currentScope.exchange[t].nextContact);
-
-                        if (trydate > date) 
-                            newExchange.priority = 2;
-                        else
-                            newExchange.priority = 1;
-                        
 
                         $.ajax({
                             url: "/api/exchanges",
@@ -370,6 +429,183 @@
                 }
 
             });
+            $("#noBtn").on("click", function () {
+                for (var t = 0; t < currentScope.exchange.length; t++) {
+                    if (currentScope.exchange[t].userId == currentUser.id && currentScope.exchange[t].contactId == currentContact.id) {
+                        newExchange = currentScope.exchange[t];
+
+                        newExchange.contact = currentContact;
+                        newExchange.user = currentUser;
+
+                        var date = new Date();
+                        date.setDate(date.getDate() + 2);
+
+                        var trydate = Date.parse(currentScope.exchange[t].nextContact);
+
+                        if (trydate > date)
+                            newExchange.priority = 2;
+                        else
+                            newExchange.priority = 1;
+
+
+                        $.ajax({
+                            url: "/api/exchanges",
+                            method: "PUT",
+                            data: newExchange
+                        })
+
+                        setTimeout(function () { window.location.reload(); }, 200);
+                    }
+                }
+
+            });
+
+            $("#createCustomer").on("click", function () {
+                document.getElementById("contactInfomation").style.display = 'none';
+                document.getElementById("mailDiv").style.display = 'none';
+                document.getElementById("phoneDiv").style.display = 'none';
+                document.getElementById("createInformation").style.display = 'block';
+                document.getElementById("createTypeName").innerHTML = "Create Customer";
+
+                document.getElementById("creatingContact").style.display = 'none';
+                document.getElementById("creatingCompany").style.display = 'none';
+                document.getElementById("creatingCustomer").style.display = 'block';
+                document.getElementById("allConts").style.display = 'none';
+            });
+            $("#createContact").on("click", function () {
+                document.getElementById("contactInfomation").style.display = 'none';
+                document.getElementById("mailDiv").style.display = 'none';
+                document.getElementById("phoneDiv").style.display = 'none';
+                document.getElementById("createInformation").style.display = 'block';
+                document.getElementById("createTypeName").innerHTML = "Create Contact";
+
+                document.getElementById("creatingContact").style.display = 'block';
+                document.getElementById("creatingCompany").style.display = 'none';
+                document.getElementById("creatingCustomer").style.display = 'none';
+            });
+            $("#createCompany").on("click", function () {
+                document.getElementById("contactInfomation").style.display = 'none';
+                document.getElementById("mailDiv").style.display = 'none';
+                document.getElementById("phoneDiv").style.display = 'none';
+                document.getElementById("createInformation").style.display = 'block';
+                document.getElementById("createTypeName").innerHTML = "Create Company";
+
+                document.getElementById("creatingContact").style.display = 'none';
+                document.getElementById("creatingCompany").style.display = 'block';
+                document.getElementById("creatingCustomer").style.display = 'none';
+                document.getElementById("allConts").style.display = 'none';
+            });
+
+            $("#createCustomerBtn").on("click", function () {
+                var errors = 0;
+
+                if ($('#CustomerName').val() == "") {document.getElementById("creatingCustomerNameError").innerHTML = "Name is required";errors++;
+                }
+                else
+                    document.getElementById("creatingCustomerNameError").innerHTML = "";
+
+                if ($('#CustomerEmail').val() == "") {document.getElementById("creatingCustomerMailError").innerHTML = "ERROR"; errors++;}
+                else if (!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test($('#CustomerEmail').val()))) {document.getElementById("creatingCustomerMailError").innerHTML = "Invalid email"; errors++;}
+                else
+                    document.getElementById("creatingCustomerMailError").innerHTML = "";
+
+                if ($('#CustomerAddress').val() == "") {document.getElementById("creatingCustomerAddressError").innerHTML = "Address is required"; errors++;}
+                else
+                    document.getElementById("creatingCustomerAddressError").innerHTML = "";
+
+                if ($('#CustomerPhone').val() == "") {document.getElementById("creatingCustomerPhoneError").innerHTML = "Phone is Required"; errors++;}
+                else if (isNaN($('#CustomerPhone').val())) {document.getElementById("creatingCustomerPhoneError").innerHTML = "Only digits"; errors++;}
+                else if ($('#CustomerPhone').val().length != 8) {document.getElementById("creatingCustomerPhoneError").innerHTML = "Phone is 8 digits"; errors++;}
+                else
+                    document.getElementById("creatingCustomerPhoneError").innerHTML = "";
+
+                if (errors != 0)
+                    return;
+                
+                var newCustomer = {
+                    id: "",
+                    name: "",
+                    addressInfoId: "",
+                    addressInfo: {
+                        id: "",
+                        address: "",
+                        email: "",
+                        phone: ""
+                    }
+                };
+
+                newCustomer.name = $('#CustomerName').val();
+                newCustomer.id = currentScope.companyCustomer[0].companyId;
+                newCustomer.addressInfo.address = $('#CustomerAddress').val();
+                newCustomer.addressInfo.phone = $('#CustomerPhone').val();
+                newCustomer.addressInfo.email = $('#CustomerEmail').val();
+
+                console.log("NewCustomer");
+                console.log(newCustomer);
+
+                $.ajax({
+                    url: "/api/customers",
+                    method: "Post",
+                    data: newCustomer
+                })
+
+                setTimeout(function () { window.location.reload(); }, 200);
+            });
+
+            $("#createCompanyBtn").on("click", function () {
+                var errors = 0;
+
+                if ($('#CompanyName').val() == "") {document.getElementById("creatingCompanyNameError").innerHTML = "Name is required";errors++;}
+                else
+                    document.getElementById("creatingCompanyNameError").innerHTML = "";
+
+                if ($('#CompanyEmail').val() == "") {document.getElementById("creatingCompanyMailError").innerHTML = "ERROR"; errors++;}
+                else if (!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test($('#CompanyEmail').val()))) {document.getElementById("creatingCompanyMailError").innerHTML = "Invalid email"; errors++;}
+                else
+                    document.getElementById("creatingCompanyMailError").innerHTML = "";
+
+                if ($('#CompanyAddress').val() == "") {document.getElementById("creatingCompanyAddressError").innerHTML = "Address is required"; errors++;}
+                else
+                    document.getElementById("creatingCompanyAddressError").innerHTML = "";
+
+                if ($('#CompanyPhone').val() == "") {document.getElementById("creatingCompanyPhoneError").innerHTML = "Phone is Required"; errors++;}
+                else if (isNaN($('#CompanyPhone').val())) {document.getElementById("creatingCompanyPhoneError").innerHTML = "Only digits"; errors++;}
+                else if ($('#CompanyPhone').val().length != 8) {document.getElementById("creatingCompanyPhoneError").innerHTML = "Phone is 8 digits"; errors++;}
+                else
+                    document.getElementById("creatingCompanyPhoneError").innerHTML = "";
+                
+                if (errors != 0)
+                    return;
+                
+                var newCompany = {
+                    id: "",
+                    name: "",
+                    addressInfoId: "",
+                    addressInfo: {
+                        id: "",
+                        address: "",
+                        email: "",
+                        phone: ""
+                    }
+                };
+
+                newCompany.name = $('#CompanyName').val();
+                newCompany.addressInfo.address = $('#CompanyAddress').val();
+                newCompany.addressInfo.phone = $('#CompanyPhone').val();
+                newCompany.addressInfo.email = $('#CompanyEmail').val();
+
+                console.log("NewCompany");
+                console.log(newCompany);
+
+                $.ajax({
+                    url: "/api/companies",
+                    method: "Post",
+                    data: newCompany
+                })
+
+                setTimeout(function () { window.location.reload(); }, 200);
+            });
+
         })
     </script>
 }

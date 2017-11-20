@@ -34,9 +34,6 @@ namespace CleverCSM.Controllers
         [HttpPost]
         public ActionResult Save(Customer customer)
         {
-            //_context.AddressInfo.Add(customer.AddressInfo);
-            //_context.SaveChanges();
-
             var companyId = customer.Id;
 
             _context.AddressInfo.Add(customer.AddressInfo);

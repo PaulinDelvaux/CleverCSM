@@ -76,18 +76,12 @@ namespace CleverCSM.Controllers
             {
                 return View(model);
             }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, false, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
                     return RedirectToAction("Index", "Home");
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -143,7 +137,15 @@ namespace CleverCSM.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            var lotsofcompany = _context.Company.ToList();
+            
+            var viewRegister = new RegisterViewModel
+            {
+                Company = lotsofcompany
+            };
+            
+            return View(viewRegister);
+            
         }
 
         //
@@ -167,12 +169,6 @@ namespace CleverCSM.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
                     var addrInfo = new AddressInfo
                     {
                         Email =user.Email,
@@ -191,7 +187,7 @@ namespace CleverCSM.Controllers
                     var newuser = new User
                     {
                         Name = user.NameOfUser,
-                        CompanyName = "ClecerCode",
+                        CompanyName = model.CompanyName,
                         Type = 2,
                         AddressInfoId = addrInfo.Id,
                         AddressInfoEmail=addrInfo.Email,

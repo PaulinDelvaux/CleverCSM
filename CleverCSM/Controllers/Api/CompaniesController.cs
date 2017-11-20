@@ -42,21 +42,13 @@ namespace CleverCSM.Controllers.Api
         public IHttpActionResult CreateCompany(CompanyDTO companydto)
         {
             var company = Mapper.Map<CompanyDTO, Company>(companydto);
-            var addressinfo = Mapper.Map<AddressInfoDTO, AddressInfo>(companydto.AddressInfo);
-
-            _context.AddressInfo.Add(addressinfo);
-            _context.SaveChanges();
-
-            var aInfo = _context.AddressInfo.SingleOrDefault(c => c.Email == companydto.AddressInfo.Email && c.Address == companydto.AddressInfo.Address && c.Phone == companydto.AddressInfo.Phone);
-
-            companydto.AddressInfoId = aInfo.Id;
-
+            
             _context.Company.Add(company);
             _context.SaveChanges();
 
             companydto.Id = company.Id;
 
-            return Created(new Uri(Request.RequestUri + "/" + companydto.Id), companydto);
+            return Ok(Mapper.Map<Company, CompanyDTO>(company));
         }
 
         // PUT api/companies/1
